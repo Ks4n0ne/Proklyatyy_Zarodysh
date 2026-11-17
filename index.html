@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#090d1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.1.9">
+<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.2.1">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>HUNTER'S WORLD — 1.1.5</title>
@@ -555,7 +555,7 @@ header{padding:12px 14px 16px;margin:2px 0 14px;border:1px solid #465477;border-
 </style>
 
 <style id="hw-concept-art-theme-115">
-/* HUNTER'S WORLD 1.1.9 — purple concept-art visual refresh */
+/* HUNTER'S WORLD 1.2.1 — purple concept-art visual refresh */
 :root{color-scheme:dark;--bg:#080513;--panel:#15102a;--panel2:#100b20;--line:#493078;--text:#f7f1ff;--muted:#b9a9d5;--accent:#b77aff;--gold:#ffd16d;--red:#ff718d}
 body{background:radial-gradient(ellipse at 12% 0%,#31145b 0,transparent 38%),radial-gradient(ellipse at 92% 12%,#171d50 0,transparent 35%),linear-gradient(145deg,#080513,#0d0920 55%,#080513);background-attachment:fixed}
 .app{max-width:1180px}
@@ -1396,7 +1396,7 @@ $('genderSelect').value=state.gender;$('genderSelect').onchange=()=>{if(playerNa
 $('saveNickButton').onclick=()=>{if(playerName()){status('Для смены ника используй кнопку с оплатой.');return;}let n=$('nicknameInput').value;if(setNick(n))status('Ник сохранён.');};$('changeNickButton').onclick=()=>{if(!playerName()){alert('Сначала задай ник бесплатно.');return;}let n=$('nicknameInput').value;if(!validNick(n)){alert('Ник должен содержать 3–16 символов: буквы, цифры, _ или -.');return;}if(n===playerName()){alert('Это уже твой текущий ник.');return;}if(confirm('Сменить ник на «'+n+'» за $50 000?')){if(setNick(n,true))$('profileNotice').textContent='Ник успешно изменён. Списано $50 000.';}};
 let pendingChatMedia=null;function clearChatMedia(){pendingChatMedia=null;$('chatMediaInput').value='';$('chatMediaName').textContent='Можно прикрепить изображение или GIF до 400 КБ';$('chatMediaPreview').classList.add('hidden');$('chatMediaPreview').innerHTML='';}
 $('chatMediaInput').onchange=e=>{let f=e.target.files&&e.target.files[0];if(!f)return;if(!/^image\/(png|jpeg|webp|gif)$/.test(f.type)||f.size>400*1024){alert('Выбери PNG, JPG, WEBP или GIF размером не более 400 КБ.');clearChatMedia();return;}let reader=new FileReader();reader.onload=()=>{pendingChatMedia={data:String(reader.result),type:f.type==='image/gif'?'gif':'image'};$('chatMediaName').textContent=f.name+' · '+Math.round(f.size/1024)+' КБ';let box=$('chatMediaPreview');box.classList.remove('hidden');box.innerHTML='';let img=document.createElement('img');img.src=pendingChatMedia.data;img.alt='Предпросмотр';let label=document.createElement('span');label.className='chat-file-name';label.textContent=f.type==='image/gif'?'Анимированная GIF готова к отправке':'Изображение готово к отправке';let remove=document.createElement('button');remove.type='button';remove.className='btn secondary';remove.textContent='Убрать';remove.onclick=clearChatMedia;box.append(img,label,remove);};reader.readAsDataURL(f);};
-$('chatForm').onsubmit=async e=>{e.preventDefault();let input=$('chatInput'),msg=input.value.trim();if(!playerName()){status('Сначала задай игровой ник.');$('nicknameInput').focus();return;}let record=getModeration();if(!pzIsCreator&&(record.permanent||record.muteUntil>Date.now())){updateChatModerationUI();return;}if(!msg&&!pendingChatMedia)return;let moderation=moderateChat(msg);if(!moderation.ok){let r=registerViolation(playerName());chatLine('Модерация',violationMessage(playerName(),r)+' '+moderation.reason,true);input.value='';updateChatModerationUI();save();return;}let packet={type:'chat',name:playerName(),level:Number(state.level)||1,title:state.selectedTitle||'',gender:state.gender||'boy',avatar:state.avatar||'🙂',avatarFrame:state.avatarFrame||'none',message:msg.slice(0,120),media:pendingChatMedia?.data||null};let send=window.pzSendGlobalChat;if(typeof send!=='function'){let st=$('globalChatStatus');if(st)st.textContent='Глобальный чат пока не подключён. Подожди подключения и попробуй ещё раз.';return;}let submitBtn=$('chatForm').querySelector('button[type="submit"]');if(submitBtn)submitBtn.disabled=true;let result;try{result=await send(packet);}catch(err){result={ok:false,error:err.message||String(err)};}finally{if(submitBtn&&!getModeration().permanent&&getModeration().muteUntil<=Date.now())submitBtn.disabled=false;}if(!result||!result.ok){let st=$('globalChatStatus');if(st)st.textContent='Не удалось отправить сообщение: '+(result?.error||'нет соединения');return;}chatLine(packet.name,packet.message,false,packet,'',pendingChatMedia);input.value='';clearChatMedia();};
+$('chatForm').onsubmit=async e=>{e.preventDefault();let input=$('chatInput'),msg=input.value.trim();if(!playerName()){status('Сначала задай игровой ник.');$('nicknameInput').focus();return;}let record=getModeration();if(!pzIsCreator&&(record.permanent||record.muteUntil>Date.now())){updateChatModerationUI();return;}if(!msg&&!pendingChatMedia)return;let moderation=moderateChat(msg);if(!moderation.ok){let r=registerViolation(playerName());chatLine('Модерация',violationMessage(playerName(),r)+' '+moderation.reason,true);input.value='';updateChatModerationUI();save();return;}let packet={type:'chat',name:playerName(),level:Number(state.level)||1,title:state.selectedTitle||'',gender:state.gender||'boy',avatar:state.avatar||'🙂',avatarFrame:state.avatarFrame||'none',message:msg.slice(0,120),media:pendingChatMedia?.data||null};let send=window.pzSendGlobalChat;if(typeof send!=='function'){let st=$('globalChatStatus');if(st)st.textContent='Глобальный чат пока не подключён. Подожди подключения и попробуй ещё раз.';return;}let submitBtn=$('chatForm').querySelector('button[type="submit"]');if(submitBtn)submitBtn.disabled=true;let result;try{result=await send(packet);}catch(err){result={ok:false,error:err.message||String(err)};}finally{if(submitBtn&&!getModeration().permanent&&getModeration().muteUntil<=Date.now())submitBtn.disabled=false;}if(!result||!result.ok){let st=$('globalChatStatus');if(st)st.textContent='Не удалось отправить сообщение: '+(result?.error||'нет соединения');return;}input.value='';clearChatMedia();};
 ['creatorBanBtn','creatorUnbanBtn','creatorMuteBtn','creatorUnmuteBtn'].forEach(id=>{const b=$(id);if(b)b.onclick=()=>{const action={creatorBanBtn:'ban',creatorUnbanBtn:'unban',creatorMuteBtn:'mute',creatorUnmuteBtn:'unmute'}[id];pzModerateLocal($('creatorTargetNick').value,action,$('creatorMuteMinutes').value);};});
 $('submitAppeal').onclick=()=>{let r=getModeration(),muted=r.permanent||r.muteUntil>Date.now();if(!muted)return;let challenge=ensureAppealChallenge(r);if(challenge.solved||challenge.attempts>=2){updateChatModerationUI();return;}challenge.attempts++;try{localStorage.setItem('foodcall_appeal_challenge_v1',JSON.stringify(challenge));}catch(e){}let answer=Number($('appealAnswer').value);if(!Number.isFinite(answer)||answer!==challenge.a*challenge.b){$('appealAnswer').value='';$('appealStatus').textContent=challenge.attempts>=2?'⛔ Неверно. Обе попытки использованы. До окончания бана новые примеры недоступны.':'❌ Неверно. Осталась '+(2-challenge.attempts)+' попытка.';updateChatModerationUI();return;}try{let key=moderationKey(playerName()),all=JSON.parse(localStorage.getItem(MODERATION_KEY)||'{}'),current=all[key]||r;current.muteUntil=0;current.permanent=false;current.appealUnlockedAt=Date.now();all[key]=current;localStorage.setItem(MODERATION_KEY,JSON.stringify(all));let appeal={player:playerName(),createdAt:Date.now(),forMute:String(r.muteUntil||'permanent'),violations:r.violations,status:'Разблокирован решением примера',method:'Проверка таблицы умножения'};localStorage.setItem('foodcall_appeal_v1',JSON.stringify(appeal));challenge.solved=true;localStorage.setItem('foodcall_appeal_challenge_v1',JSON.stringify(challenge));$('appealStatus').textContent='✅ Верно! Доступ к чату восстановлен.';$('appealAnswer').value='';$('submitAppeal').disabled=true;updateChatModerationUI();}catch(e){$('appealStatus').textContent='Не удалось сохранить результат.';}};
 
@@ -1524,7 +1524,7 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_P7TmWqL3vgO_UtcxnwNsqw_D7Ns0Yv6';
  if(!window.supabase||!window.supabase.createClient){setTimeout(()=>{const e=document.getElementById('cloudFriendIdentity');if(e)e.textContent='Не удалось загрузить Supabase. Проверь интернет.'},0);return;}
  const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
- let uid=null,lastNick='',busy=false,poll=null,globalChatChannel=null,globalChatReady=false;
+ let uid=null,lastNick='',busy=false,poll=null,globalChatChannel=null,globalChatReady=false,renderCloudMessage=null,chatPollTimer=null,chatHistoryLoaded=false;
  const seenChatIds=new Set();
  const $=id=>document.getElementById(id);
  const msg=(t)=>{if($('friendStatus'))$('friendStatus').textContent=t;};
@@ -1539,6 +1539,11 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
  async function respond(id,accept){const {error}=await db.rpc('respond_friend_request',{p_request_id:id,p_accept:accept});if(error)msg('Ошибка: '+error.message);else msg(accept?'Заявка принята. Вы теперь друзья!':'Заявка отклонена.');await refreshSocial();}
  async function removeFriend(id){const {error}=await db.rpc('remove_friend',{p_friend:id});if(error)msg('Не удалось удалить друга: '+error.message);await refreshSocial();}
 
+ async function syncRecentCloudMessages(){
+  const {data,error}=await db.from('global_chat_messages').select('id,user_id,name,message,level,title,gender,avatar,avatar_frame,media,created_at').order('id',{ascending:false}).limit(60);
+  if(error)throw error;
+  (data||[]).reverse().forEach(row=>{if(renderCloudMessage)renderCloudMessage(row);});
+ }
  async function connectGlobalChat(){
   if(globalChatChannel)return;
   const status=$('globalChatStatus');
@@ -1551,9 +1556,8 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
    globalChatChannel.on('presence',{event:'sync'},updateOnlineCount);
    globalChatChannel.on('presence',{event:'join'},updateOnlineCount);
    globalChatChannel.on('presence',{event:'leave'},updateOnlineCount);
-   globalChatChannel.on('broadcast',{event:'world-event'},({payload})=>{if(!payload||typeof payload.text!=='string')return;if(typeof window.pzReceiveWorldEvent==='function')window.pzReceiveWorldEvent(payload);});
    // Сообщения хранятся в общей таблице Supabase, а не только в краткоживущем Broadcast.
-   const renderCloudMessage=row=>{
+   renderCloudMessage=row=>{
     if(!row||row.id==null||seenChatIds.has(String(row.id)))return;
     seenChatIds.add(String(row.id));
     const payload={name:String(row.name||'Игрок').slice(0,32),message:String(row.message||'').slice(0,120),level:row.level,title:row.title,gender:row.gender,avatar:row.avatar,avatarFrame:row.avatar_frame,createdAt:row.created_at};
@@ -1563,12 +1567,11 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
     if(typeof window.pzReceiveGlobalChat==='function')window.pzReceiveGlobalChat(payload,media);
    };
    globalChatChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'global_chat_messages'},({new:row})=>renderCloudMessage(row));
-   globalChatChannel.on('broadcast',{event:'world-event'},({payload})=>{if(!payload||typeof payload.text!=='string')return;if(typeof window.pzReceiveWorldEvent==='function')window.pzReceiveWorldEvent(payload);});
    globalChatChannel.subscribe(async state=>{
     globalChatReady=state==='SUBSCRIBED';
     if(globalChatReady){
      globalChatChannel.track({user_id:uid,nick:(currentNick()||'Игрок').slice(0,32),online_at:new Date().toISOString()}).then(updateOnlineCount).catch(()=>{});
-     try{const {data,error}=await db.from('global_chat_messages').select('id,user_id,name,message,level,title,gender,avatar,avatar_frame,media,created_at').order('created_at',{ascending:false}).limit(60);if(error)throw error;(data||[]).reverse().forEach(renderCloudMessage);}catch(err){if(status)status.textContent='Чат подключён, но не удалось загрузить историю: '+(err.message||err);}
+     try{if(!chatHistoryLoaded){seenChatIds.clear();chatHistory=[];const chatBox=$('chatMessages');if(chatBox)chatBox.innerHTML='';chatHistoryLoaded=true;}await syncRecentCloudMessages();if(!chatPollTimer)chatPollTimer=setInterval(()=>{if(globalChatReady)syncRecentCloudMessages();},2500);}catch(err){if(status)status.textContent='Не удалось загрузить сообщения из облака: '+(err.message||err);} 
     }else {const onlineEl=$('serverOnline');if(onlineEl)onlineEl.textContent='—';}
     if(status&&state!=='SUBSCRIBED')status.textContent=state==='CHANNEL_ERROR'?'🔴 Ошибка подключения глобального чата. Проверь Realtime в настройках Supabase.':'Подключение к глобальному чату…';
     else if(status&&state==='SUBSCRIBED')status.textContent='🟢 Глобальный чат подключён.';
@@ -1581,8 +1584,9 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
   for(let wait=0;wait<40&&!globalChatReady;wait++)await new Promise(resolve=>setTimeout(resolve,250));
   if(!globalChatChannel||!globalChatReady)return {ok:false,error:'глобальный чат не подключён. Проверь интернет и статус Realtime в Supabase.'};
   try{
-   const {error}=await db.from('global_chat_messages').insert({user_id:uid,name:String(packet.name||'Игрок').slice(0,32),message:String(packet.message||'').slice(0,120),level:Number(packet.level)||1,title:String(packet.title||'').slice(0,40),gender:String(packet.gender||'boy').slice(0,12),avatar:String(packet.avatar||'🙂').slice(0,24),avatar_frame:String(packet.avatarFrame||'none').slice(0,24),media:packet.media||null});
+   const {data,error}=await db.from('global_chat_messages').insert({user_id:uid,name:String(packet.name||'Игрок').slice(0,32),message:String(packet.message||'').slice(0,120),level:Number(packet.level)||1,title:String(packet.title||'').slice(0,40),gender:String(packet.gender||'boy').slice(0,12),avatar:String(packet.avatar||'🙂').slice(0,24),avatar_frame:String(packet.avatarFrame||'none').slice(0,24),media:packet.media||null}).select('id,user_id,name,message,level,title,gender,avatar,avatar_frame,media,created_at').single();
    if(error)throw error;
+   // Не рисуем отправленное локально: его покажет Realtime или резервная облачная синхронизация.
    return {ok:true};
   }catch(e){return {ok:false,error:e.message||String(e)}}
  };
