@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#090d1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.1.8">
+<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.1.9">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>HUNTER'S WORLD — 1.1.5</title>
@@ -555,7 +555,7 @@ header{padding:12px 14px 16px;margin:2px 0 14px;border:1px solid #465477;border-
 </style>
 
 <style id="hw-concept-art-theme-115">
-/* HUNTER'S WORLD 1.1.8 — purple concept-art visual refresh */
+/* HUNTER'S WORLD 1.1.9 — purple concept-art visual refresh */
 :root{color-scheme:dark;--bg:#080513;--panel:#15102a;--panel2:#100b20;--line:#493078;--text:#f7f1ff;--muted:#b9a9d5;--accent:#b77aff;--gold:#ffd16d;--red:#ff718d}
 body{background:radial-gradient(ellipse at 12% 0%,#31145b 0,transparent 38%),radial-gradient(ellipse at 92% 12%,#171d50 0,transparent 35%),linear-gradient(145deg,#080513,#0d0920 55%,#080513);background-attachment:fixed}
 .app{max-width:1180px}
@@ -1525,6 +1525,7 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
  if(!window.supabase||!window.supabase.createClient){setTimeout(()=>{const e=document.getElementById('cloudFriendIdentity');if(e)e.textContent='Не удалось загрузить Supabase. Проверь интернет.'},0);return;}
  const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
  let uid=null,lastNick='',busy=false,poll=null,globalChatChannel=null,globalChatReady=false;
+ const seenChatIds=new Set();
  const $=id=>document.getElementById(id);
  const msg=(t)=>{if($('friendStatus'))$('friendStatus').textContent=t;};
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1551,19 +1552,26 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
    globalChatChannel.on('presence',{event:'join'},updateOnlineCount);
    globalChatChannel.on('presence',{event:'leave'},updateOnlineCount);
    globalChatChannel.on('broadcast',{event:'world-event'},({payload})=>{if(!payload||typeof payload.text!=='string')return;if(typeof window.pzReceiveWorldEvent==='function')window.pzReceiveWorldEvent(payload);});
-   globalChatChannel.on('broadcast',{event:'message'},({payload})=>{ 
-    if(!payload||typeof payload!=='object')return;
-    const name=String(payload.name||'Игрок').slice(0,32);
-    const message=String(payload.message||'').slice(0,120);
-    const moderation=window.pzModerateIncoming?window.pzModerateIncoming(message):{ok:true};
+   // Сообщения хранятся в общей таблице Supabase, а не только в краткоживущем Broadcast.
+   const renderCloudMessage=row=>{
+    if(!row||row.id==null||seenChatIds.has(String(row.id)))return;
+    seenChatIds.add(String(row.id));
+    const payload={name:String(row.name||'Игрок').slice(0,32),message:String(row.message||'').slice(0,120),level:row.level,title:row.title,gender:row.gender,avatar:row.avatar,avatarFrame:row.avatar_frame,createdAt:row.created_at};
+    const moderation=window.pzModerateIncoming?window.pzModerateIncoming(payload.message):{ok:true};
     if(!moderation.ok)return;
-    const media=typeof payload.media==='string'&&payload.media.length<=560000&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(payload.media)?{data:payload.media,type:/^data:image\/gif/i.test(payload.media)?'gif':'image'}:null;
-    if(typeof window.pzReceiveGlobalChat==='function')window.pzReceiveGlobalChat({...payload,name,message},media);
-   }).subscribe(state=>{
+    const media=typeof row.media==='string'&&row.media.length<=560000&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(row.media)?{data:row.media,type:/^data:image\/gif/i.test(row.media)?'gif':'image'}:null;
+    if(typeof window.pzReceiveGlobalChat==='function')window.pzReceiveGlobalChat(payload,media);
+   };
+   globalChatChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'global_chat_messages'},({new:row})=>renderCloudMessage(row));
+   globalChatChannel.on('broadcast',{event:'world-event'},({payload})=>{if(!payload||typeof payload.text!=='string')return;if(typeof window.pzReceiveWorldEvent==='function')window.pzReceiveWorldEvent(payload);});
+   globalChatChannel.subscribe(async state=>{
     globalChatReady=state==='SUBSCRIBED';
-    if(globalChatReady){globalChatChannel.track({user_id:uid,nick:(currentNick()||'Игрок').slice(0,32),online_at:new Date().toISOString()}).then(updateOnlineCount).catch(()=>{});}
-    else {const onlineEl=$('serverOnline');if(onlineEl)onlineEl.textContent='—';}
-    if(status)status.textContent=globalChatReady?'🟢 Глобальный чат подключён. Сообщения видны всем игрокам онлайн.':state==='CHANNEL_ERROR'?'🔴 Ошибка подключения глобального чата. Проверь Realtime в настройках Supabase.':'Подключение к глобальному чату…';
+    if(globalChatReady){
+     globalChatChannel.track({user_id:uid,nick:(currentNick()||'Игрок').slice(0,32),online_at:new Date().toISOString()}).then(updateOnlineCount).catch(()=>{});
+     try{const {data,error}=await db.from('global_chat_messages').select('id,user_id,name,message,level,title,gender,avatar,avatar_frame,media,created_at').order('created_at',{ascending:false}).limit(60);if(error)throw error;(data||[]).reverse().forEach(renderCloudMessage);}catch(err){if(status)status.textContent='Чат подключён, но не удалось загрузить историю: '+(err.message||err);}
+    }else {const onlineEl=$('serverOnline');if(onlineEl)onlineEl.textContent='—';}
+    if(status&&state!=='SUBSCRIBED')status.textContent=state==='CHANNEL_ERROR'?'🔴 Ошибка подключения глобального чата. Проверь Realtime в настройках Supabase.':'Подключение к глобальному чату…';
+    else if(status&&state==='SUBSCRIBED')status.textContent='🟢 Глобальный чат подключён.';
    });
   }catch(e){globalChatReady=false;if(status)status.textContent='Ошибка глобального чата: '+(e.message||e);}
  }
@@ -1573,9 +1581,9 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
   for(let wait=0;wait<40&&!globalChatReady;wait++)await new Promise(resolve=>setTimeout(resolve,250));
   if(!globalChatChannel||!globalChatReady)return {ok:false,error:'глобальный чат не подключён. Проверь интернет и статус Realtime в Supabase.'};
   try{
-   const result=await globalChatChannel.send({type:'broadcast',event:'message',payload:{name:packet.name,message:String(packet.message||'').slice(0,120),level:packet.level,title:packet.title,gender:packet.gender,avatar:packet.avatar,avatarFrame:packet.avatarFrame,media:packet.media||null,createdAt:Date.now()}});
-   if(result==='ok'||result?.status==='ok'||result?.status==='sent')return {ok:true};
-   return {ok:false,error:result==='timed out'?'сервер не ответил вовремя':(typeof result==='string'?result:JSON.stringify(result)||'ошибка отправки')};
+   const {error}=await db.from('global_chat_messages').insert({user_id:uid,name:String(packet.name||'Игрок').slice(0,32),message:String(packet.message||'').slice(0,120),level:Number(packet.level)||1,title:String(packet.title||'').slice(0,40),gender:String(packet.gender||'boy').slice(0,12),avatar:String(packet.avatar||'🙂').slice(0,24),avatar_frame:String(packet.avatarFrame||'none').slice(0,24),media:packet.media||null});
+   if(error)throw error;
+   return {ok:true};
   }catch(e){return {ok:false,error:e.message||String(e)}}
  };
  window.pzPublishWorldEvent=async event=>{if(!globalChatChannel||!globalChatReady||!event)return;try{await globalChatChannel.send({type:'broadcast',event:'world-event',payload:{text:String(event.text||'').slice(0,180),icon:String(event.icon||'🌐').slice(0,8),createdAt:Date.now(),player:currentNick()||'Игрок'}});}catch(e){}};
