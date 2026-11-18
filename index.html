@@ -702,6 +702,8 @@ footer{border-color:#382653;color:#a998c4}
    <button class="btn" id="hwVerifyCodeBtn" type="button" style="width:100%">Подтвердить код</button>
   </div>
   <button class="btn secondary" id="hwCloudSyncBtn" type="button" style="width:100%;margin-top:8px">☁️ Синхронизировать сейчас</button>
+  <button class="btn secondary" id="hwBackupListBtn" type="button" style="width:100%;margin-top:7px">🕘 История резервных копий</button>
+  <div id="hwBackupList" hidden style="margin-top:8px"></div>
  </div>
  <div class="notice" id="hwAccountStatus" style="margin-top:10px">Аккаунт не синхронизирован.</div>
  <small class="muted">После подтверждения почты прогресс будет сохраняться в облаке автоматически. На другом устройстве войди с той же почтой и паролем.</small>
@@ -910,7 +912,7 @@ footer{border-color:#382653;color:#a998c4}
 <section id="events" class="tab hidden">
  <div class="panel"><div class="row"><h2>🌦️ Мировое событие</h2><span class="pill" id="eventClock">Событие активно</span></div><div class="notice" id="eventNotice">Обычная погода. Во время события у каждого пойманного персонажа есть 18% шанс получить его погодный эффект. Такой персонаж навсегда приносит больше денег.</div><div class="foods" id="eventChoices" style="margin-top:10px"></div><h3 style="margin:14px 0 6px">⏳ Расписание событий</h3><div id="eventSchedule" class="event-schedule"></div><small class="muted">Таймеры будущих событий приблизительные: длительность текущего события 5–10 минут, затем ожидание по расписанию.</small><p class="muted">Погода сменяется автоматически по расписанию. Каждое событие длится случайные 5–10 минут, затем возвращается обычная погода. В комнате погода синхронизируется с ведущим игроком.</p><h3>🎉 Редкие события</h3><div id="specialEvents" class="foods"></div><div class="notice" id="specialEventStatus">События появляются по таймеру.</div><h3>🏅 Таблица лидеров</h3><div id="leaderboard" class="event-schedule"></div></div>
 </section>
-<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.25<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
+<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.26<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
 </div>
 
 <script>
@@ -1668,7 +1670,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
 </script>
 
 <footer class="music-credits-footer">
- <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.25</strong></div>
+ <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.26</strong></div>
  <a href="#musicCredits" class="music-credits-toggle" id="musicCreditsToggle" aria-expanded="false">🎼 Авторы и произведения музыки</a>
  <div id="musicCredits" class="music-credits-content hidden">
   <div class="music-credit-item"><b>Произведение:</b> «HUNTER\'S WORLD — Саундтрек миров» и восемь тематических композиций миров.<small><b>Автор:</b> многослойная процедурная композиция, созданная средствами Web Audio API специально для HUNTER\'S WORLD: мелодия, бас, аккорды и перкуссия.</small></div>
@@ -1776,11 +1778,40 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
   cloudSaveBusy=true;
   try{
    const snapshot=JSON.parse(JSON.stringify(window.HW_GAME_API.getState()));
+   // Сохраняем предыдущую облачную версию до перезаписи, если она действительно изменилась.
+   const previous=await db.from('player_game_saves').select('save_data').eq('user_id',uid).maybeSingle();
+   if(previous.error)throw previous.error;
+   if(previous.data&&JSON.stringify(previous.data.save_data)!==JSON.stringify(snapshot)){
+    const backup=await db.from('player_game_save_backups').insert({user_id:uid,save_data:previous.data.save_data});
+    if(backup.error)throw new Error('Не удалось создать резервную копию: '+backup.error.message);
+    const old=await db.from('player_game_save_backups').select('id').eq('user_id',uid).order('created_at',{ascending:false}).range(10,1000);
+    if(!old.error&&old.data?.length)await db.from('player_game_save_backups').delete().eq('user_id',uid).in('id',old.data.map(x=>x.id));
+   }
    const {error}=await db.from('player_game_saves').upsert({user_id:uid,save_data:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'});
    if(error)throw error;
-   if(showStatus)accountStatus('☁️ Прогресс сохранён в облаке. Можно продолжить игру на другом устройстве.');
+   if(showStatus)accountStatus('☁️ Прогресс сохранён в облаке · '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
   }catch(e){if(showStatus)accountStatus('Не удалось сохранить прогресс: '+(e.message||e));}
   finally{cloudSaveBusy=false;if(cloudSaveQueued){cloudSaveQueued=false;uploadCloudSave(false);}}
+ }
+ async function showCloudBackups(){
+  const box=$('hwBackupList');if(!box)return;
+  if(!uid||!cloudSaveReady){accountStatus('Сначала войди в подтверждённый аккаунт.');return;}
+  box.hidden=false;box.innerHTML='<div class="notice">Загружаем резервные копии…</div>';
+  const {data,error}=await db.from('player_game_save_backups').select('id,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(10);
+  if(error){box.innerHTML='<div class="notice">Не удалось загрузить историю. Проверь SQL-настройку резервных копий.</div>';return;}
+  if(!data?.length){box.innerHTML='<div class="notice">Резервных копий пока нет. Они появятся после первого изменения облачного сохранения.</div>';return;}
+  box.innerHTML=data.map(x=>'<div class="item" style="margin-top:6px"><div><b>☁️ Резервная копия</b><small>'+new Date(x.created_at).toLocaleString('ru-RU')+'</small></div><button class="btn secondary" data-restore-backup="'+x.id+'" type="button">Восстановить</button></div>').join('');
+  box.querySelectorAll('[data-restore-backup]').forEach(btn=>btn.onclick=()=>restoreCloudBackup(btn.dataset.restoreBackup));
+ }
+ async function restoreCloudBackup(id){
+  if(!confirm('Восстановить эту резервную копию? Текущее облачное сохранение сначала будет сохранено в истории.'))return;
+  try{
+   const old=await db.from('player_game_saves').select('save_data').eq('user_id',uid).maybeSingle();if(old.error)throw old.error;
+   const chosen=await db.from('player_game_save_backups').select('save_data').eq('user_id',uid).eq('id',id).single();if(chosen.error)throw chosen.error;
+   if(old.data){const b=await db.from('player_game_save_backups').insert({user_id:uid,save_data:old.data.save_data});if(b.error)throw b.error;}
+   const put=await db.from('player_game_saves').upsert({user_id:uid,save_data:chosen.data.save_data,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(put.error)throw put.error;
+   window.HW_GAME_API.applyState(chosen.data.save_data);cloudSaveReady=true;accountStatus('♻️ Резервная копия восстановлена. Текущая версия сохранена в истории.');await showCloudBackups();
+  }catch(e){accountStatus('Не удалось восстановить копию: '+(e.message||e));}
  }
  window.HW_CLOUD_SAVE=()=>{if(!cloudSaveReady)return;clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>uploadCloudSave(false),1800);};
  async function loadCloudSave(){
@@ -1842,6 +1873,10 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
   if($('hwLoginBtn'))$('hwLoginBtn').onclick=loginEmail;
   if($('hwVerifyCodeBtn'))$('hwVerifyCodeBtn').onclick=verifyAccountCode;
   if($('hwCloudSyncBtn'))$('hwCloudSyncBtn').onclick=()=>{if(!uid||!cloudSaveReady)return accountStatus('Сначала войди и подтверди аккаунт.');uploadCloudSave(true);};
+  if($('hwBackupListBtn'))$('hwBackupListBtn').onclick=()=>showCloudBackups().catch(e=>accountStatus('Ошибка истории: '+e.message));
+  window.addEventListener('pagehide',()=>{if(uid&&cloudSaveReady&&window.HW_GAME_API){clearTimeout(cloudSaveTimer);uploadCloudSave(false);}});
+  window.addEventListener('online',()=>{if(uid&&cloudSaveReady)uploadCloudSave(false);});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&uid&&cloudSaveReady){clearTimeout(cloudSaveTimer);uploadCloudSave(false);}});
   db.auth.getSession().then(({data,error})=>{if(error)throw error;const u=data.session?.user;if(u)accountStatus(u.is_anonymous?'Играешь как гость. Добавь почту и пароль, чтобы сохранить прогресс между устройствами.':('Вошёл как '+(u.email||'аккаунт')+'.'));}).catch(()=>{});
  }
  async function start(){bindAccountUI();try{await ensureAuth();}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Облачный профиль: '+(e.message||e);}try{connectGlobalChat();}catch(e){if($('globalChatStatus'))$('globalChatStatus').textContent='Ошибка запуска глобального чата: '+(e.message||e);}if(uid){try{await syncProfile();const sess=await db.auth.getSession();if(sess.data.session?.user&&!sess.data.session.user.is_anonymous){await loadCloudSave();}else{accountStatus('Играешь как гость. Зарегистрируй почту, чтобы включить облачное сохранение.');}await refreshSocial();await refreshTrades();if($('addFriendBtn'))$('addFriendBtn').onclick=searchAndRequest;setInterval(async()=>{try{await syncProfile();await refreshSocial();await refreshTrades();}catch(e){}},8000);if($('cloudFriendIdentity')&&!$('cloudFriendIdentity').textContent.startsWith('Облачный профиль:'))$('cloudFriendIdentity').textContent='Облачный профиль подключён.';}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Ошибка профиля: '+(e.message||e);}}}
@@ -1863,10 +1898,10 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='HUNTERS_WORLD_1.2.25_PC.html';
+    a.download='HUNTERS_WORLD_1.2.26_PC.html';
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1500);
-    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.25_PC.html отправлен в загрузки.';
+    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.26_PC.html отправлен в загрузки.';
    }catch(error){
     if(pcDownloadHint)pcDownloadHint.textContent='Не удалось скачать файл. Попробуй открыть игру в Chrome или Edge.';
    }
