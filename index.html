@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#090d1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.2.1">
+<meta name="apple-mobile-web-app-title" content="HUNTER'S WORLD 1.2.7">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>HUNTER'S WORLD — 1.1.5</title>
+<title>HUNTER'S WORLD — 1.2.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#0a1020;--panel:#141e33;--panel2:#0d172a;--line:#2b3b5b;--text:#f2f6ff;--muted:#aab8d2;--accent:#baf34e;--gold:#f6c85f;--red:#f07878}
@@ -555,7 +555,7 @@ header{padding:12px 14px 16px;margin:2px 0 14px;border:1px solid #465477;border-
 </style>
 
 <style id="hw-concept-art-theme-115">
-/* HUNTER'S WORLD 1.2.1 — purple concept-art visual refresh */
+/* HUNTER'S WORLD 1.2.6 — purple concept-art visual refresh */
 :root{color-scheme:dark;--bg:#080513;--panel:#15102a;--panel2:#100b20;--line:#493078;--text:#f7f1ff;--muted:#b9a9d5;--accent:#b77aff;--gold:#ffd16d;--red:#ff718d}
 body{background:radial-gradient(ellipse at 12% 0%,#31145b 0,transparent 38%),radial-gradient(ellipse at 92% 12%,#171d50 0,transparent 35%),linear-gradient(145deg,#080513,#0d0920 55%,#080513);background-attachment:fixed}
 .app{max-width:1180px}
@@ -597,13 +597,118 @@ footer{border-color:#382653;color:#a998c4}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 
+
+<style id="hw-pc-interface-v123">
+/* HUNTER'S WORLD 1.2.6 — отдельная компоновка для ПК */
+@media (min-width: 900px){
+  body{min-height:100vh}
+  .app{
+    width:min(100% - 36px, 1680px);max-width:none;margin:0 auto;padding:22px 0 30px;
+    display:grid;grid-template-columns:224px minmax(0,1fr);
+    grid-template-areas:"header header" "stats stats" "nav content" "footer footer";
+    grid-template-rows:auto auto minmax(520px,1fr) auto;column-gap:22px;row-gap:0;align-items:start;
+  }
+  .app>header{grid-area:header;min-width:0;margin:4px 0 16px;padding:18px 22px;border-radius:22px}
+  .app>.topstats{grid-area:stats;min-width:0;grid-template-columns:repeat(5,minmax(0,1fr));margin:0 0 18px}
+  .app>nav#tabs{
+    grid-area:nav;position:sticky;top:16px;align-self:start;display:flex;flex-direction:column;align-items:stretch;
+    gap:7px;max-height:calc(100vh - 32px);overflow-y:auto;overflow-x:hidden;padding:12px 10px;
+    margin:0;border:1px solid #49336e;border-radius:19px;background:linear-gradient(165deg,#130d25f5,#0b0918f5);
+    box-shadow:0 16px 38px #0007, inset 0 1px #ffffff0b;scrollbar-width:thin;
+  }
+  .app>nav#tabs:before{content:"HUNTER'S WORLD";display:block;padding:5px 9px 11px;margin:0 0 3px;border-bottom:1px solid #49336e;color:#cda7ff;font:900 12px Outfit,Inter,sans-serif;letter-spacing:.13em}
+  nav#tabs button{width:100%;min-width:0;min-height:44px;flex:0 0 auto;justify-content:flex-start;text-align:left;padding:10px 12px;border-radius:12px;font-size:12px}
+  nav#tabs button .hw-icon{width:18px;height:18px;margin-right:9px}
+  nav#tabs button span{overflow:hidden;text-overflow:ellipsis}
+  .app>.tab:not(.hidden){grid-area:content;min-width:0;width:100%;max-width:none;margin:0;animation:hwTabIn .22s ease both}
+  .app>#profile{grid-area:content}
+  .app>footer{grid-area:footer;width:100%;margin-top:22px}
+  .app>.music-credits-footer{grid-area:footer}
+  /* На ПК чат — обычный пункт левого меню, а не плавающая кнопка. */
+  body>button[data-tab="chat"]{position:static!important;right:auto!important;bottom:auto!important;z-index:auto!important;width:100%;min-height:44px!important;padding:10px 12px!important;border-radius:12px!important;justify-content:flex-start!important;margin:0!important;box-shadow:none!important;backdrop-filter:none!important}
+  body>button[data-tab="chat"] .hw-icon{width:18px;height:18px;margin-right:9px}
+  .app>.tab:not(.hidden) .panel{margin-top:0}
+  .app>.tab:not(.hidden)>.panel:first-child{margin-top:0}
+  .profile-drawer{z-index:80}
+}
+@media (min-width:900px) and (max-width:1150px){
+  .app{grid-template-columns:196px minmax(0,1fr);column-gap:15px;width:min(100% - 24px,1680px)}
+  .app>.topstats{gap:7px}
+  .app>.topstats .stat{padding:10px}
+  .app>.topstats .stat strong{font-size:17px}
+}
+@media (max-width:899px){
+  .app>nav#tabs{display:flex}
+}
+</style>
+
+<style id="hw-pc-chat-float-v124">
+/* HUNTER'S WORLD 1.2.6 — удобный плавающий чат на ПК */
+@media (min-width:900px){
+  body>button[data-tab="chat"]{
+    position:fixed!important;right:24px!important;bottom:22px!important;left:auto!important;top:auto!important;
+    z-index:120!important;width:auto!important;min-width:116px;min-height:52px!important;
+    display:flex!important;align-items:center;justify-content:center!important;gap:8px;
+    padding:11px 18px!important;border:1px solid #d3aaff!important;border-radius:999px!important;
+    background:linear-gradient(135deg,#9b55e7f2,#50308df2)!important;color:#fff!important;
+    box-shadow:0 9px 30px #8e45db66,0 0 0 5px #a45cff15!important;
+    backdrop-filter:blur(12px);font-weight:900;
+  }
+  body>button[data-tab="chat"] .hw-icon{width:20px;height:20px;margin:0!important}
+  .app>#chat.tab:not(.hidden){
+    position:fixed!important;z-index:110!important;right:24px!important;bottom:88px!important;
+    left:auto!important;top:auto!important;grid-area:auto!important;
+    width:min(440px,calc(100vw - 48px))!important;max-width:none!important;
+    max-height:min(76vh,700px)!important;overflow:auto!important;margin:0!important;
+    padding:0!important;border:1px solid #8055ad;border-radius:19px;
+    background:linear-gradient(145deg,#1b1430f7,#100b20f7);
+    box-shadow:0 22px 70px #000c;backdrop-filter:blur(18px);
+  }
+  .app>#chat.tab:not(.hidden)>.panel{margin:0!important;padding:14px!important}
+  .app>#chat.tab:not(.hidden) .chatbox{height:260px;min-height:180px}
+}
+@media (min-width:900px) and (max-height:650px){
+  .app>#chat.tab:not(.hidden){max-height:calc(100vh - 108px)!important}
+  .app>#chat.tab:not(.hidden) .chatbox{height:180px}
+}
+</style>
+
+
+<style id="creator-tools-compact-layout-v125">
+/* v1.2.5: compact creator moderation dock on desktop */
+@media (min-width: 900px){
+  body.pz-creator #chat .panel:has(#creatorModerationPanel){position:relative;padding-right:14px;min-height:430px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) > .chat-switch{width:calc(100% - 228px);}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #playerChatPane,
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #systemChatPane,
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #chatForm{width:calc(100% - 228px);}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel{
+    display:block!important;position:absolute;right:14px;top:66px;width:202px;box-sizing:border-box;
+    margin:0;padding:9px;border-radius:11px;z-index:2;
+  }
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .row{gap:5px;align-items:center;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .row:first-child{flex-wrap:wrap;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel strong{font-size:12px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel p{font-size:10px;line-height:1.3;margin:5px 0 7px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel input{width:100%;min-width:0;box-sizing:border-box;padding:7px;font-size:11px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel #creatorMuteMinutes{max-width:100%!important;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .row:has(#creatorTargetNick){display:grid;grid-template-columns:1fr 58px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .row:has(#creatorBanBtn){display:grid;grid-template-columns:1fr 1fr;margin-top:6px!important;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .btn{min-width:0;width:100%;padding:6px 4px;min-height:30px;font-size:10px;white-space:normal;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel small{display:block;font-size:9px;line-height:1.3;margin-top:6px;}
+}
+@media (max-width:899px){
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel{position:static;width:100%;margin:10px 0 0;padding:10px;}
+  body.pz-creator #chat .panel:has(#creatorModerationPanel) #creatorModerationPanel .btn{padding:7px 9px;min-height:34px;font-size:11px;}
+}
+</style>
 </head>
 <body>
 <div id="runtimeError" class="notice hidden" style="position:fixed;z-index:200;left:10px;right:10px;top:10px;background:#572b36;border-color:#b85b6b" role="alert"></div><div id="weatherLayer" class="weather-layer" aria-hidden="true"></div><div id="ohEventLayer" class="ohoh-layer" aria-hidden="true"></div><div id="ohEventBanner" class="oh-banner hidden"></div><div id="weatherFlash" class="weather-flash" aria-hidden="true"></div>
 <div class="app">
 
 
-<div id="settingsModal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-label="Настройки игры"><div class="settings-card"><div class="row"><h2>⚙️ Настройки</h2><button type="button" class="btn secondary" id="settingsClose">✕</button></div><label class="setting-row"><span>🔊 Громкость</span><b id="volumeValue">30%</b></label><input id="volumeSlider" type="range" min="0" max="100" value="30" class="volume-slider"><div class="muted">Громкость фоновой музыки. Уровень музыки увеличен; включается переключателем.</div><label class="setting-toggle"><span>🌦️ Эффекты погоды</span><input id="weatherFxToggle" type="checkbox" checked></label><label class="setting-toggle"><span>🎵 Музыка</span><input id="musicSettingToggle" type="checkbox"></label><div class="muted" style="font-size:11px;margin-top:7px">🎼 Для каждого мира и события звучит отдельная процедурная музыкальная тема.</div><div class="notice" id="pwaInstallBox" style="margin-top:12px">
+<div id="settingsModal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-label="Настройки игры"><div class="settings-card"><div class="row"><h2>⚙️ Настройки</h2><button type="button" class="btn secondary" id="settingsClose">✕</button></div><label class="setting-row"><span>🔊 Громкость</span><b id="volumeValue">30%</b></label><input id="volumeSlider" type="range" min="0" max="100" value="30" class="volume-slider"><div class="muted">Громкость фоновой музыки. Уровень музыки увеличен; включается переключателем.</div><label class="setting-toggle"><span>🌦️ Эффекты погоды</span><input id="weatherFxToggle" type="checkbox" checked></label><label class="setting-toggle"><span>🎵 Музыка</span><input id="musicSettingToggle" type="checkbox"></label><label class="setting-toggle"><span>💬 Звуки уведомлений чата</span><input id="chatNotificationsToggle" type="checkbox" checked></label><div class="muted" style="font-size:11px;margin-top:7px">🎼 Для каждого мира и события звучит отдельная процедурная музыкальная тема.</div><div class="notice" id="pwaInstallBox" style="margin-top:12px">
  <div style="font-weight:800;margin-bottom:5px">📲 Установить HUNTER'S WORLD</div>
  <div id="pwaInstallHint" class="muted" style="font-size:12px;margin-bottom:9px">Установи игру как приложение — она появится на главном экране и будет открываться в отдельном окне.</div>
  <button type="button" class="btn" id="pwaInstallButton" style="width:100%">Установить приложение</button>
@@ -798,7 +903,7 @@ footer{border-color:#382653;color:#a998c4}
 <section id="events" class="tab hidden">
  <div class="panel"><div class="row"><h2>🌦️ Мировое событие</h2><span class="pill" id="eventClock">Событие активно</span></div><div class="notice" id="eventNotice">Обычная погода. Во время события у каждого пойманного персонажа есть 18% шанс получить его погодный эффект. Такой персонаж навсегда приносит больше денег.</div><div class="foods" id="eventChoices" style="margin-top:10px"></div><h3 style="margin:14px 0 6px">⏳ Расписание событий</h3><div id="eventSchedule" class="event-schedule"></div><small class="muted">Таймеры будущих событий приблизительные: длительность текущего события 5–10 минут, затем ожидание по расписанию.</small><p class="muted">Погода сменяется автоматически по расписанию. Каждое событие длится случайные 5–10 минут, затем возвращается обычная погода. В комнате погода синхронизируется с ведущим игроком.</p><h3>🎉 Редкие события</h3><div id="specialEvents" class="foods"></div><div class="notice" id="specialEventStatus">События появляются по таймеру.</div><h3>🏅 Таблица лидеров</h3><div id="leaderboard" class="event-schedule"></div></div>
 </section>
-<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER'S WORLD • 1.1.5<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
+<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER'S WORLD • 1.2.11<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
 </div>
 
 <script>
@@ -877,7 +982,7 @@ const auras=[
 ];
 let state={money:100,level:1,xp:0,strength:10,rebirths:0,unlockedAuras:['none'],selectedAura:'none',foodOwned:[0],selectedFood:0,weightOwned:[0],selectedWeight:0,base:[],capacity:8,record:0,counts:{},event:0,visitor:null,visitorTime:0,throwPower:0,throwTimer:null,throwDir:1,mutations:{},gender:'boy',achievements:[],selectedTitle:'Новичок',completedWorlds:[],worldLuckBonus:0,collectionWorld:0,activeWorld:0,avatar:'🙂',avatarX:50,avatarY:50,avatarFrame:'none',wheelLast:0,wheelRerolls:0,wheelLuckUntil:0,baseStyle:0,questDay:'',quests:[],questClaimed:[],fusions:0,throws:0,weatherSecret:0,goldHourUntil:0,bossUntil:0,meteorUntil:0,merchantUntil:0,merchantBought:[],dailyClaimDate:"",dailyStreak:0,seasonXP:0,seasonClaimed:[],friends:[],socialRoster:[],ohEventNextAt:0,ohEventEndsAt:0,combo:0,comboBest:0,rareEpicActive:false,rareEpicStart:0,rareEpicEnd:0,huntRangeLevel:0,huntLuckLevel:0,huntTimeLevel:0};
 let lastTick=Date.now();
-const settings={volume:30,weatherFx:true,music:false};
+const settings={volume:30,weatherFx:true,music:false,chatNotifications:true};
 try{Object.assign(settings,JSON.parse(localStorage.getItem('foodcall_settings')||'{}'));}catch(e){}
 // v38: снижаем верхний предел ранее сохранённой громкости до более тихого уровня.
 settings.volume=Math.min(30,Math.max(0,Number(settings.volume)||30));
@@ -1366,9 +1471,38 @@ function updateChatModerationUI(){let r=getModeration(),el=$('chatModerationStat
 function violationMessage(name,r){let msg='⚠️ Нарушение: запрещённые слова и ссылки в чате недопустимы. ';if(r.muteUntil>Date.now())msg+='Третье нарушение — временный бан на '+clockText(r.muteUntil-Date.now())+'. Следующий бан будет дольше.';else msg+='Предупреждение '+r.cycleCount+' из 2. На третьем нарушении будет временный бан.';return msg;}
 const CHAT_HISTORY_KEY='foodcall_chat_history_v1';
 let chatHistory=[];
-function drawChatLine(entry){let {name,msg,system=false,meta=null}=entry;let line=document.createElement('div');line.className='chatline '+(system?'system':'player')+(entry.kind==='achievement'?' achievement':'');let b=document.createElement('b');if(system){b.textContent='[Система] ';line.append(b);}else{let level=meta?.level||((name===playerName())?state.level:1),title=entry.kind==='achievement'?'':(meta?.title||((name===playerName())?state.selectedTitle:'')),gender=meta?.gender||((name===playerName())?state.gender:'boy');let av=document.createElement('span');av.className='chat-avatar-wrap '+('avatar-frame-'+(meta?.avatarFrame||((name===playerName())?state.avatarFrame:'none')));av.innerHTML=avatarMarkup(meta?.avatar||((name===playerName())?state.avatar:'🙂'));b.append(av);let badge=document.createElement('span');badge.className='chat-badge';badge.textContent=levelBadge(level)+' '+level+' ур.';let nick=document.createElement('span');nick.className='chat-name';nick.style.color=levelColor(level);nick.textContent=(gender==='girl'?'♀ ':'♂ ')+name;b.append(badge,nick);if(meta?.creator||((name===playerName())&&pzIsCreator)){let cb=document.createElement('span');cb.className='creator-tag';cb.textContent='СОЗДАТЕЛЬ';b.append(cb);}line.append(b);if(title){let t=document.createElement('span');t.className='chat-title';t.textContent='「'+title+'」';line.append(t);}line.append(document.createTextNode(': '));}if(msg)line.append(document.createTextNode(msg));if(entry.media&&typeof entry.media.data==='string'&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(entry.media.data)){let img=document.createElement('img');img.className='chat-media';img.src=entry.media.data;img.alt=entry.media.type==='gif'?'GIF в чате':'Изображение в чате';img.loading='lazy';line.append(img);}const target=(system||entry.kind==='achievement')?'systemMessages':'chatMessages';const box=$(target);if(box){box.append(line);box.scrollTop=box.scrollHeight;}if(target==='systemMessages')markSystemUnread();}
+// Мягкий звук нового сообщения. Звук включается после первого действия пользователя,
+// чтобы браузер разрешил воспроизведение уведомлений.
+let chatSoundContext=null,chatSoundUnlocked=false;
+function unlockChatSound(){
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return; if(!chatSoundContext)chatSoundContext=new AC();if(chatSoundContext.state==='suspended')chatSoundContext.resume();chatSoundUnlocked=true;}catch(e){}
+}
+function playChatNotificationSound(){
+ // Настройка пользователя имеет приоритет: без галочки звук полностью отключён.
+ if(settings.chatNotifications===false)return;
+ if(!chatSoundUnlocked)return;
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  if(!chatSoundContext)chatSoundContext=new AC();
+  if(chatSoundContext.state==='suspended')chatSoundContext.resume();
+  const ctx=chatSoundContext,now=ctx.currentTime;
+  // Два коротких чистых тона — ненавязчивый мессенджерный «динь».
+  [[740,0,0.105],[988,0.115,0.16]].forEach(([freq,delay,duration])=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.type='sine';osc.frequency.setValueAtTime(freq,now+delay);
+   gain.gain.setValueAtTime(0.0001,now+delay);
+   gain.gain.exponentialRampToValueAtTime(0.085,now+delay+0.012);
+   gain.gain.exponentialRampToValueAtTime(0.0001,now+delay+duration);
+   osc.connect(gain);gain.connect(ctx.destination);osc.start(now+delay);osc.stop(now+delay+duration+0.015);
+  });
+ }catch(e){}
+}
+// Явно публикуем функцию в window: облачный модуль чата находится в отдельном script-блоке.
+window.playChatNotificationSound=playChatNotificationSound;
+['pointerdown','keydown','touchstart'].forEach(evt=>window.addEventListener(evt,unlockChatSound,{once:true,passive:true}));
+function drawChatLine(entry){let {name,msg,system=false,meta=null}=entry;let line=document.createElement('div');line.className='chatline '+(system?'system':'player')+(entry.kind==='achievement'?' achievement':'');let b=document.createElement('b');if(system){b.textContent='[Система] ';line.append(b);}else{let level=meta?.level||((name===playerName())?state.level:1),title=entry.kind==='achievement'?'':(meta?.title||((name===playerName())?state.selectedTitle:'')),gender=meta?.gender||((name===playerName())?state.gender:'boy');let av=document.createElement('span');av.className='chat-avatar-wrap '+('avatar-frame-'+(meta?.avatarFrame||((name===playerName())?state.avatarFrame:'none')));av.innerHTML=avatarMarkup(meta?.avatar||((name===playerName())?state.avatar:'🙂'));b.append(av);let badge=document.createElement('span');badge.className='chat-badge';badge.textContent=levelBadge(level)+' '+level+' ур.';let nick=document.createElement('span');nick.className='chat-name';nick.style.color=levelColor(level);nick.textContent=(gender==='girl'?'♀ ':'♂ ')+name;b.append(badge,nick);if(meta?.creator||((name===playerName())&&pzIsCreator)){let cb=document.createElement('span');cb.className='creator-tag';cb.textContent='СОЗДАТЕЛЬ';b.append(cb);}line.append(b);if(title){let t=document.createElement('span');t.className='chat-title';t.textContent='「'+title+'」';line.append(t);}line.append(document.createTextNode(': '));}if(msg)line.append(document.createTextNode(msg));if(entry.media&&typeof entry.media.data==='string'&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(entry.media.data)){let img=document.createElement('img');img.className='chat-media';img.src=entry.media.data;img.alt=entry.media.type==='gif'?'GIF в чате':'Изображение в чате';img.loading='lazy';line.append(img);}const sentAt=entry.createdAt||entry.timestamp; if(sentAt){const stampDate=new Date(sentAt);if(!Number.isNaN(stampDate.getTime())){const stamp=document.createElement('small');stamp.className='chat-timestamp';stamp.textContent=stampDate.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});stamp.style.cssText='display:block;margin:3px 0 0 30px;font-size:10px;line-height:1.2;letter-spacing:.02em;color:rgba(190,184,211,.62);font-weight:500;';line.append(stamp);}}const target=(system||entry.kind==='achievement')?'systemMessages':'chatMessages';const box=$(target);if(box){box.append(line);box.scrollTop=box.scrollHeight;}if(target==='systemMessages')markSystemUnread();}
 let systemUnreadCount=0;function markSystemUnread(){const pane=$('systemChatPane');if(pane&&!pane.classList.contains('hidden'))return;systemUnreadCount++;const badge=$('systemUnread');if(badge){badge.textContent=systemUnreadCount>99?'99+':String(systemUnreadCount);badge.classList.remove('hidden');}}function clearSystemUnread(){systemUnreadCount=0;const badge=$('systemUnread');if(badge){badge.textContent='0';badge.classList.add('hidden');}}function switchChat(which){const sys=which==='system';$('playerChatPane').classList.toggle('hidden',sys);$('systemChatPane').classList.toggle('hidden',!sys);$('showPlayerChat').classList.toggle('active',!sys);$('showPlayerChat').classList.toggle('secondary',sys);$('showSystemChat').classList.toggle('active',sys);$('showSystemChat').classList.toggle('secondary',!sys);const form=$('chatForm');if(form)form.classList.toggle('hidden',sys);if(sys)clearSystemUnread();}
-function chatLine(name,msg,system=false,meta=null,kind="",media=null){let safeMeta=meta?{level:meta.level,title:meta.title,gender:meta.gender,avatar:meta.avatar,avatarFrame:meta.avatarFrame}:null;let entry={kind,name:String(name||'Система').slice(0,32),msg:String(msg||'').slice(0,500),system:!!system,meta:safeMeta,media:media&&typeof media.data==='string'&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(media.data)?{type:media.type||'image',data:media.data}:null};drawChatLine(entry);chatHistory.push(entry);if(chatHistory.length>60)chatHistory=chatHistory.slice(-60);try{localStorage.setItem(CHAT_HISTORY_KEY,JSON.stringify(chatHistory));}catch(e){/* Large animated avatars/media remain visible in the current session. */}}
+function chatLine(name,msg,system=false,meta=null,kind="",media=null){let safeMeta=meta?{level:meta.level,title:meta.title,gender:meta.gender,avatar:meta.avatar,avatarFrame:meta.avatarFrame}:null;let entry={kind,name:String(name||'Система').slice(0,32),msg:String(msg||'').slice(0,500),system:!!system,meta:safeMeta,createdAt:meta?.createdAt||new Date().toISOString(),media:media&&typeof media.data==='string'&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(media.data)?{type:media.type||'image',data:media.data}:null};drawChatLine(entry);chatHistory.push(entry);if(chatHistory.length>60)chatHistory=chatHistory.slice(-60);try{localStorage.setItem(CHAT_HISTORY_KEY,JSON.stringify(chatHistory));}catch(e){/* Large animated avatars/media remain visible in the current session. */}}
 window.pzModerateIncoming=msg=>moderateChat(msg);
 window.pzReceiveGlobalChat=(packet,media)=>{if(!packet)return;chatLine(packet.name,packet.message,false,packet,'',media);};
 window.pzReceiveWorldEvent=event=>{if(!event)return;addWorldFeedEvent(String(event.player||'Игрок')+' — '+String(event.text||'Необычное событие'),event.icon||'🌐',true);};
@@ -1407,12 +1541,13 @@ $('profileOpen').onclick=()=>{$('profile').classList.toggle('hidden');$('chat').
 $('profileClose').onclick=()=>{$('profile').classList.add('hidden');try{localStorage.setItem('hunters_world_active_tab_v1',localStorage.getItem('hunters_world_last_tab_v1')||'play');}catch(err){}};
 const brandTitle=$('.brand-title');if(brandTitle){brandTitle.style.cursor='pointer';brandTitle.title='Нажми, чтобы обновить игру';brandTitle.setAttribute('role','button');brandTitle.setAttribute('tabindex','0');const reloadGame=()=>window.location.reload();brandTitle.addEventListener('click',reloadGame);brandTitle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();reloadGame();}});}
 
-$('settingsOpen').onclick=()=>{$('settingsModal').classList.remove('hidden');$('volumeSlider').value=settings.volume;$('volumeValue').textContent=settings.volume+'%';$('weatherFxToggle').checked=settings.weatherFx;$('musicSettingToggle').checked=musicOn;};
+$('settingsOpen').onclick=()=>{$('settingsModal').classList.remove('hidden');$('volumeSlider').value=settings.volume;$('volumeValue').textContent=settings.volume+'%';$('weatherFxToggle').checked=settings.weatherFx;$('musicSettingToggle').checked=musicOn;$('chatNotificationsToggle').checked=settings.chatNotifications!==false;};
 $('settingsClose').onclick=()=>$('settingsModal').classList.add('hidden');
 $('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))$('settingsModal').classList.add('hidden');});
-$('volumeSlider').oninput=()=>{settings.volume=Number($('volumeSlider').value);$('volumeValue').textContent=settings.volume+'%';if(musicGain&&musicCtx)musicGain.gain.setTargetAtTime((settings.volume/100)*0.52,musicCtx.currentTime,0.15);saveSettings();};
+$('volumeSlider').oninput=()=>{settings.volume=Number($('volumeSlider').value);$('volumeValue').textContent=settings.volume+'%';if(musicGain&&musicCtx)musicGain.gain.setTargetAtTime((settings.volume/100)*0.72,musicCtx.currentTime,0.15);saveSettings();};
 $('weatherFxToggle').onchange=()=>{settings.weatherFx=$('weatherFxToggle').checked;saveSettings();applyWeatherFxPreference();};
 $('musicSettingToggle').onchange=()=>{setMusicEnabled($('musicSettingToggle').checked);};
+$('chatNotificationsToggle').onchange=()=>{settings.chatNotifications=$('chatNotificationsToggle').checked;saveSettings();};
 const wheelPrizes=[{label:'🪙 2 500 монет',short:'2 500',kind:'money',value:2500,weight:50,color:'#557b42'},{label:'✨ +400 XP',short:'+400 XP',kind:'xp',value:400,weight:23,color:'#315d8c'},{label:'💰 20 000 монет',short:'20 000',kind:'money',value:20000,weight:12,color:'#8b6330'},{label:'🎟️ +1 повторный ход',short:'+1 ход',kind:'reroll',value:1,weight:7,color:'#76508c'},{label:'🍀 Удача +3% на 24 часа',short:'+3% удачи',kind:'luck',value:3,weight:3,color:'#287b68'},{label:'👑 150 000 монет',short:'150 000',kind:'money',value:150000,weight:3,color:'#a13e54'},{label:'🌠 +5 000 XP',short:'+5 000 XP',kind:'xp',value:5000,weight:2,color:'#b58a28'}];
 let wheelSpinning=false;
 load();weatherIndex=Number(state.event)||0;weatherStage=Number(state.weatherStage)||0;weatherEndsAt=Number(state.weatherEndsAt)||0;weatherNextAt=Number(state.weatherNextAt)||Date.now()+180000;if(!Number.isFinite(state.ohEventNextAt)||state.ohEventNextAt<=0)state.ohEventNextAt=Date.now()+OHOHO_INTERVAL;if(state.ohEventConfigVersion!==2){if(!(state.ohEventEndsAt>Date.now()))state.ohEventNextAt=Date.now()+OHOHO_INTERVAL;state.ohEventConfigVersion=2;}if(weatherIndex>0&&weatherEndsAt<=Date.now()){weatherIndex=0;weatherEndsAt=0;weatherNextAt=Date.now()+weatherWait[Math.min(8,weatherStage+1)];state.event=0;state.weatherEndsAt=0;state.weatherNextAt=weatherNextAt;}applyWeather(weatherIndex,weatherEndsAt,weatherNextAt,false,weatherStage);restoreChatHistory();renderWorldEventFeed();$('hideWorldFeed').onclick=()=>setWorldFeedVisible(false);$('showWorldFeed').onclick=()=>{setWorldFeedVisible(true);renderWorldEventFeed();};let feedPref=localStorage.getItem('hunters_world_feed_visible_v1');setWorldFeedVisible(feedPref!=='0',false);try{const savedTab=localStorage.getItem('hunters_world_active_tab_v1');if(savedTab==='profile'){$('profile').classList.remove('hidden');renderProfile();}else if(savedTab&&document.querySelector('#tabs [data-tab="'+savedTab+'"]'))document.querySelector('#tabs [data-tab="'+savedTab+'"]').click();}catch(err){}
@@ -1425,37 +1560,56 @@ function renderWheel(){let ready=wheelReady(),btn=$('spinWheel');if(!btn)return;
 function wheelPrizeAngle(prize){let cursor=0;for(const p of wheelPrizes){let center=cursor+p.weight*3.6/2;if(p===prize)return center;cursor+=p.weight*3.6;}return 0;}
 function spinDailyWheel(){if(wheelSpinning)return;let free=wheelReady();if(!free&&state.wheelRerolls<=0){renderWheel();return;}wheelSpinning=true;if(free)state.wheelLast=Date.now();else state.wheelRerolls--;save();renderWheel();let total=wheelPrizes.reduce((a,p)=>a+p.weight,0),r=Math.random()*total,prize=wheelPrizes[0];for(const pz of wheelPrizes){r-=pz.weight;if(r<0){prize=pz;break;}}let disc=$('wheelDisc');if(disc){let turns=5+Math.floor(Math.random()*4),angle=wheelPrizeAngle(prize),deg=turns*360+(360-angle);disc.style.transform='rotate('+deg+'deg)';}renderWheel();setTimeout(()=>{if(prize.kind==='money')state.money+=prize.value;else if(prize.kind==='xp')gainXP(prize.value);else if(prize.kind==='reroll')state.wheelRerolls++;else if(prize.kind==='luck'){state.wheelLuckUntil=Date.now()+86400000;state.wheelLuckBonus=prize.value;}$('wheelResult').innerHTML='🎉 Выпало: <b>'+prize.label+'</b>!<br><small>'+(state.wheelRerolls>0?'Есть '+state.wheelRerolls+' повторное вращение.':'Следующее бесплатное вращение через '+clockText(Math.max(0,86400000-(Date.now()-state.wheelLast)))+'.')+'</small>';log('🎡 Ежедневное колесо: '+prize.label+'.');wheelSpinning=false;refresh();renderWheel();$('spinWheel').textContent=state.wheelRerolls>0?'🎟️ ПОВТОРНОЕ ВРАЩЕНИЕ':wheelReady()?'🎡 КРУТИТЬ КОЛЕСО':'⏳ ВЕРНИСЬ ЗАВТРА';save();},3200);}
 $('spinWheel').onclick=spinDailyWheel;
-// Процедурный саундтрек: отдельная спокойная тема для каждого мира и каждого события.
-// Музыка создаётся Web Audio API прямо в игре; внешние аудиофайлы не загружаются.
-
+// HUNTER'S WORLD 1.2.6 — многослойный процедурный саундтрек.
+// Мелодия, аккордовые пэды, бас и мягкая перкуссия создаются Web Audio API.
 const worldMusicThemes=[
- {name:'Новое начало',scale:[0,2,4,7,9],root:64,wave:'triangle',tempo:520},
- {name:'Карамельные холмы',scale:[0,2,4,7,11],root:64,wave:'triangle',tempo:620},
- {name:'Ледяное королевство',scale:[0,2,3,7,9],root:62,wave:'sine',tempo:820},
- {name:'Космический рубеж',scale:[0,2,5,7,9],root:57,wave:'sine',tempo:700},
- {name:'Измерение Бездны',scale:[0,1,5,7,8],root:53,wave:'triangle',tempo:880},
- {name:'Подводное царство',scale:[0,3,5,7,10],root:55,wave:'sine',tempo:850},
- {name:'Древние джунгли',scale:[0,2,5,7,9],root:59,wave:'triangle',tempo:680},
- {name:'Кибер-город',scale:[0,2,4,7,9],root:58,wave:'sine',tempo:540}
+ {name:'Новое начало',scale:[0,2,4,7,9],root:64,wave:'triangle',tempo:310,mood:'warm'},
+ {name:'Карамельные холмы',scale:[0,2,4,7,11],root:64,wave:'triangle',tempo:330,mood:'bright'},
+ {name:'Ледяное королевство',scale:[0,2,3,7,9],root:62,wave:'sine',tempo:350,mood:'ice'},
+ {name:'Космический рубеж',scale:[0,2,5,7,9],root:57,wave:'sine',tempo:300,mood:'space'},
+ {name:'Измерение Бездны',scale:[0,1,5,7,8],root:53,wave:'triangle',tempo:340,mood:'dark'},
+ {name:'Подводное царство',scale:[0,3,5,7,10],root:55,wave:'sine',tempo:360,mood:'deep'},
+ {name:'Древние джунгли',scale:[0,2,5,7,9],root:59,wave:'triangle',tempo:290,mood:'wild'},
+ {name:'Кибер-город',scale:[0,2,4,7,9],root:58,wave:'sawtooth',tempo:260,mood:'cyber'}
 ];
 const eventMusicThemes=[
  null,
- {name:'Дождь',scale:[0,2,5,7,9],root:57,wave:'sine',tempo:900},
- {name:'Гроза',scale:[0,1,5,7,8],root:52,wave:'triangle',tempo:650},
- {name:'Снегопад',scale:[0,2,4,7,11],root:65,wave:'sine',tempo:980},
- {name:'Метеоритный дождь',scale:[0,3,5,7,10],root:60,wave:'sine',tempo:560},
- {name:'Радужный шторм',scale:[0,2,4,7,9],root:67,wave:'triangle',tempo:600},
- {name:'Извержение вулкана',scale:[0,1,4,7,8],root:48,wave:'triangle',tempo:610},
- {name:'Глитч-шторм',scale:[0,1,3,6,8],root:55,wave:'square',tempo:430},
- {name:'Ночь Бездны',scale:[0,1,5,7,8],root:50,wave:'sine',tempo:1050}
+ {name:'Дождь',scale:[0,2,5,7,9],root:57,wave:'sine',tempo:370,mood:'rain'},
+ {name:'Гроза',scale:[0,1,5,7,8],root:52,wave:'triangle',tempo:270,mood:'storm'},
+ {name:'Снегопад',scale:[0,2,4,7,11],root:65,wave:'sine',tempo:390,mood:'ice'},
+ {name:'Метеоритный дождь',scale:[0,3,5,7,10],root:60,wave:'sine',tempo:250,mood:'space'},
+ {name:'Радужный шторм',scale:[0,2,4,7,9],root:67,wave:'triangle',tempo:280,mood:'bright'},
+ {name:'Извержение вулкана',scale:[0,1,4,7,8],root:48,wave:'triangle',tempo:260,mood:'fire'},
+ {name:'Глитч-шторм',scale:[0,1,3,6,8],root:55,wave:'square',tempo:230,mood:'cyber'},
+ {name:'Ночь Бездны',scale:[0,1,5,7,8],root:50,wave:'sine',tempo:420,mood:'dark'}
 ];
 function activeMusicTheme(){return weatherIndex>0&&eventMusicThemes[weatherIndex]?eventMusicThemes[weatherIndex]:worldMusicThemes[Math.min(Number(state.activeWorld)||0,worldMusicThemes.length-1)];}
 function midiHz(n){return 440*Math.pow(2,(n-69)/12);}
-function playSoftNote(freq,duration,when,volume,wave){if(!musicCtx||!musicGain)return;let o=musicCtx.createOscillator(),g=musicCtx.createGain(),filter=musicCtx.createBiquadFilter();o.type=wave||'sine';o.frequency.setValueAtTime(freq,when);filter.type='lowpass';filter.frequency.value=1700;g.gain.setValueAtTime(0.0001,when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),when+.10);g.gain.exponentialRampToValueAtTime(.0001,when+duration);o.connect(filter);filter.connect(g);g.connect(musicGain);o.start(when);o.stop(when+duration+.03);}
-function scheduleMusicStep(){if(!musicOn||!musicCtx)return;const t=musicCtx.currentTime,th=activeMusicTheme(),scale=th.scale,idx=musicStep%16;const titleTheme=weatherIndex===0&&(Number(state.activeWorld)||0)===0;const titleMelody=[0,3,4,2,1,4,3,2,0,2,4,3,1,3,2,4];let degree=(titleTheme?titleMelody:[0,2,1,3,2,4,3,1,0,2,4,3,1,2,0,1])[idx];let octave=(titleTheme?12:0)+(idx%4===0?12:0);playSoftNote(midiHz(th.root+scale[degree]+octave),titleTheme?.82:.9,t,titleTheme?.082:.048,titleTheme?'triangle':th.wave);if(idx%4===0){let chord=titleTheme?[0,2,4]:[0,2,4];chord.forEach((d,j)=>playSoftNote(midiHz(th.root-12+scale[d]),titleTheme?2.0:2.8,t+j*.025,titleTheme?.026:.016,'sine'));}if(titleTheme&&idx%2===0)playSoftNote(midiHz(th.root-24+scale[[0,0,2,0][(idx/2)%4]]),.72,t,.032,'triangle');if(idx%2===1)playSoftNote(midiHz(th.root+scale[(degree+2)%scale.length]+12),.55,t+.12,titleTheme?.027:.016,'sine');musicStep++;}
+function musicEnvelope(freq,duration,when,volume,wave,filterHz,attack){
+ if(!musicCtx||!musicGain)return;const o=musicCtx.createOscillator(),g=musicCtx.createGain(),f=musicCtx.createBiquadFilter();
+ o.type=wave||'sine';o.frequency.setValueAtTime(freq,when);f.type='lowpass';f.frequency.setValueAtTime(filterHz||2200,when);f.Q.value=.65;
+ const a=attack||.035;g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),when+a);g.gain.setTargetAtTime(.0001,when+a+Math.max(.04,duration*.68),Math.max(.04,duration*.16));
+ o.connect(f);f.connect(g);g.connect(musicGain);o.start(when);o.stop(when+duration+.12);
+}
+function musicPad(root,scale,when,duration,volume){
+ [0,2,4].forEach((d,i)=>{const f=midiHz(root+scale[d%scale.length]-12);musicEnvelope(f,duration,when,volume*(i===1?.66:1),'sine',900,.28);});
+}
+function musicKick(when,amount){if(!musicCtx||!musicGain)return;const o=musicCtx.createOscillator(),g=musicCtx.createGain();o.type='sine';o.frequency.setValueAtTime(105,when);o.frequency.exponentialRampToValueAtTime(42,when+.16);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(amount,when+.008);g.gain.exponentialRampToValueAtTime(.0001,when+.22);o.connect(g);g.connect(musicGain);o.start(when);o.stop(when+.24);}
+function musicHat(when,amount){if(!musicCtx||!musicGain)return;const length=Math.floor(musicCtx.sampleRate*.055),buffer=musicCtx.createBuffer(1,length,musicCtx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);const src=musicCtx.createBufferSource(),f=musicCtx.createBiquadFilter(),g=musicCtx.createGain();src.buffer=buffer;f.type='highpass';f.frequency.value=6500;g.gain.setValueAtTime(amount,when);g.gain.exponentialRampToValueAtTime(.0001,when+.055);src.connect(f);f.connect(g);g.connect(musicGain);src.start(when);}
+function scheduleMusicStep(){
+ if(!musicOn||!musicCtx)return;const t=musicCtx.currentTime,th=activeMusicTheme(),scale=th.scale,step=musicStep%32,bar=step%16;
+ const melody=[0,2,4,2,1,2,4,3,0,2,4,3,1,3,2,4,0,2,3,4,2,1,3,2,0,4,2,3,1,2,4,2];
+ if(step%16===0)musicPad(th.root,scale,t,3.5,.018);
+ if(step%4===0){const bassDegree=[0,0,2,0][Math.floor(step/4)%4];musicEnvelope(midiHz(th.root-24+scale[bassDegree]),.52,t,.055,'triangle',420,.025);}
+ if(step%2===0){const d=melody[step],oct=(step%8===0?12:0);musicEnvelope(midiHz(th.root+scale[d]+oct),.34,t,.035,th.wave,th.mood==='cyber'?2600:1900,.025);}
+ if(step%8===4){const d=melody[(step+3)%32];musicEnvelope(midiHz(th.root+scale[d]+12),.22,t+.035,.015,'sine',3000,.018);}
+ if(bar===0||bar===8)musicKick(t,th.mood==='storm'||th.mood==='fire'?.075:.052);
+ if(step%4===2)musicHat(t,.009);if(step%4===0&&th.mood==='cyber')musicHat(t+.08,.012);
+ musicStep++;
+}
 function startMusicSequence(){if(!musicOn||!musicCtx)return;clearInterval(musicTimer);musicStep=0;scheduleMusicStep();musicTimer=setInterval(scheduleMusicStep,activeMusicTheme().tempo);}
-function changeMusicTheme(){if(!musicOn)return;let th=activeMusicTheme(),key=(weatherIndex>0?'event'+weatherIndex:'world'+(state.activeWorld||0));if(key===musicThemeKey)return;musicThemeKey=key;if(musicCtx){musicGain.gain.cancelScheduledValues(musicCtx.currentTime);musicGain.gain.setTargetAtTime(0,musicCtx.currentTime,.12);setTimeout(()=>{if(musicOn){startMusicSequence();musicGain.gain.setTargetAtTime((settings.volume/100)*.52,musicCtx.currentTime,.5);}},180);}if($('settingsNotice'))$('settingsNotice').textContent='🎵 Тема: '+th.name+'.';}
-async function setMusicEnabled(on){on=!!on;if(on){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('Web Audio недоступен');if(!musicCtx){musicCtx=new AC();musicGain=musicCtx.createGain();musicGain.gain.value=(settings.volume/100)*.52;musicGain.connect(musicCtx.destination);}await musicCtx.resume();musicOn=true;musicThemeKey='';changeMusicTheme();if($('settingsNotice'))$('settingsNotice').textContent='🎵 Музыка включена: '+activeMusicTheme().name+'.';}catch(e){musicOn=false;if($('musicSettingToggle'))$('musicSettingToggle').checked=false;if($('settingsNotice'))$('settingsNotice').textContent='Не удалось запустить музыку в этом браузере.';return;}}else{musicOn=false;clearInterval(musicTimer);musicTimer=null;musicThemeKey='';if(musicGain&&musicCtx)musicGain.gain.setTargetAtTime(0,musicCtx.currentTime,.15);if($('settingsNotice'))$('settingsNotice').textContent='Музыка выключена.';}settings.music=musicOn;if($('musicSettingToggle'))$('musicSettingToggle').checked=musicOn;saveSettings();}
+function changeMusicTheme(){if(!musicOn)return;const th=activeMusicTheme(),key=(weatherIndex>0?'event'+weatherIndex:'world'+(state.activeWorld||0));if(key===musicThemeKey)return;musicThemeKey=key;if(musicCtx){musicGain.gain.cancelScheduledValues(musicCtx.currentTime);musicGain.gain.setTargetAtTime(0,musicCtx.currentTime,.16);setTimeout(()=>{if(musicOn){startMusicSequence();musicGain.gain.setTargetAtTime((settings.volume/100)*.72,musicCtx.currentTime,.7);}},220);}if($('settingsNotice'))$('settingsNotice').textContent='🎵 Тема: '+th.name+'.';}
+async function setMusicEnabled(on){on=!!on;if(on){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('Web Audio недоступен');if(!musicCtx){musicCtx=new AC();musicGain=musicCtx.createGain();musicGain.gain.value=(settings.volume/100)*.72;musicGain.connect(musicCtx.destination);}await musicCtx.resume();musicOn=true;musicThemeKey='';changeMusicTheme();if($('settingsNotice'))$('settingsNotice').textContent='🎵 Музыка включена: '+activeMusicTheme().name+'.';}catch(e){musicOn=false;if($('musicSettingToggle'))$('musicSettingToggle').checked=false;if($('settingsNotice'))$('settingsNotice').textContent='Не удалось запустить музыку в этом браузере.';return;}}else{musicOn=false;clearInterval(musicTimer);musicTimer=null;musicThemeKey='';if(musicGain&&musicCtx)musicGain.gain.setTargetAtTime(0,musicCtx.currentTime,.15);if($('settingsNotice'))$('settingsNotice').textContent='Музыка выключена.';}settings.music=musicOn;if($('musicSettingToggle'))$('musicSettingToggle').checked=musicOn;saveSettings();}
 
 $('resetGame').onclick=()=>{
  if(!confirm('Сбросить игровой прогресс? Ник, история чата, история модерации и таймер ежедневного колеса останутся.'))return;
@@ -1507,10 +1661,10 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
 </script>
 
 <footer class="music-credits-footer">
- <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER'S WORLD</strong></div>
+ <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER'S WORLD • 1.2.11</strong></div>
  <a href="#musicCredits" class="music-credits-toggle" id="musicCreditsToggle" aria-expanded="false">🎼 Авторы и произведения музыки</a>
  <div id="musicCredits" class="music-credits-content hidden">
-  <div class="music-credit-item"><b>Произведение:</b> «HUNTER'S WORLD — Тихое начало» и восемь тематических композиций миров.<small><b>Автор:</b> процедурная композиция, созданная алгоритмически средствами Web Audio API специально для HUNTER'S WORLD. Внешние музыкальные записи и чужие аудиофайлы не используются.</small></div>
+  <div class="music-credit-item"><b>Произведение:</b> «HUNTER'S WORLD — Саундтрек миров» и восемь тематических композиций миров.<small><b>Автор:</b> многослойная процедурная композиция, созданная средствами Web Audio API специально для HUNTER'S WORLD: мелодия, бас, аккорды и перкуссия.</small></div>
   <div class="music-credit-item"><b>Произведения:</b> «Дождь», «Гроза», «Снегопад», «Метеоритный дождь», «Радужный шторм», «Извержение вулкана», «Глитч-шторм», «Ночь Бездны».<small><b>Автор:</b> процедурная композиция HUNTER'S WORLD. Каждое событие переключает собственную музыкальную тему; при отсутствии события играет тема выбранного мира.</small></div>
  </div>
 </footer>
@@ -1539,10 +1693,10 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
  async function respond(id,accept){const {error}=await db.rpc('respond_friend_request',{p_request_id:id,p_accept:accept});if(error)msg('Ошибка: '+error.message);else msg(accept?'Заявка принята. Вы теперь друзья!':'Заявка отклонена.');await refreshSocial();}
  async function removeFriend(id){const {error}=await db.rpc('remove_friend',{p_friend:id});if(error)msg('Не удалось удалить друга: '+error.message);await refreshSocial();}
 
- async function syncRecentCloudMessages(){
+ async function syncRecentCloudMessages(notifyNew=false){
   const {data,error}=await db.from('global_chat_messages').select('id,user_id,name,message,level,title,gender,avatar,avatar_frame,media,created_at').order('id',{ascending:false}).limit(60);
   if(error)throw error;
-  (data||[]).reverse().forEach(row=>{if(renderCloudMessage)renderCloudMessage(row);});
+  (data||[]).reverse().forEach(row=>{if(renderCloudMessage)renderCloudMessage(row,notifyNew);});
  }
  async function connectGlobalChat(){
   if(globalChatChannel)return;
@@ -1557,21 +1711,22 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
    globalChatChannel.on('presence',{event:'join'},updateOnlineCount);
    globalChatChannel.on('presence',{event:'leave'},updateOnlineCount);
    // Сообщения хранятся в общей таблице Supabase, а не только в краткоживущем Broadcast.
-   renderCloudMessage=row=>{
+   renderCloudMessage=(row,notify=false)=>{
     if(!row||row.id==null||seenChatIds.has(String(row.id)))return;
     seenChatIds.add(String(row.id));
+    if(notify&&row.user_id&&row.user_id!==uid&&typeof window.playChatNotificationSound==='function')window.playChatNotificationSound();
     const payload={name:String(row.name||'Игрок').slice(0,32),message:String(row.message||'').slice(0,120),level:row.level,title:row.title,gender:row.gender,avatar:row.avatar,avatarFrame:row.avatar_frame,createdAt:row.created_at};
     const moderation=window.pzModerateIncoming?window.pzModerateIncoming(payload.message):{ok:true};
     if(!moderation.ok)return;
     const media=typeof row.media==='string'&&row.media.length<=560000&&/^data:image\/(png|jpeg|webp|gif);base64,/i.test(row.media)?{data:row.media,type:/^data:image\/gif/i.test(row.media)?'gif':'image'}:null;
     if(typeof window.pzReceiveGlobalChat==='function')window.pzReceiveGlobalChat(payload,media);
    };
-   globalChatChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'global_chat_messages'},({new:row})=>renderCloudMessage(row));
+   globalChatChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'global_chat_messages'},({new:row})=>renderCloudMessage(row,true));
    globalChatChannel.subscribe(async state=>{
     globalChatReady=state==='SUBSCRIBED';
     if(globalChatReady){
      globalChatChannel.track({user_id:uid,nick:(currentNick()||'Игрок').slice(0,32),online_at:new Date().toISOString()}).then(updateOnlineCount).catch(()=>{});
-     try{if(!chatHistoryLoaded){seenChatIds.clear();chatHistory=[];const chatBox=$('chatMessages');if(chatBox)chatBox.innerHTML='';chatHistoryLoaded=true;}await syncRecentCloudMessages();if(!chatPollTimer)chatPollTimer=setInterval(()=>{if(globalChatReady)syncRecentCloudMessages();},2500);}catch(err){if(status)status.textContent='Не удалось загрузить сообщения из облака: '+(err.message||err);} 
+     try{if(!chatHistoryLoaded){seenChatIds.clear();chatHistory=[];const chatBox=$('chatMessages');if(chatBox)chatBox.innerHTML='';chatHistoryLoaded=true;}await syncRecentCloudMessages(false);if(!chatPollTimer)chatPollTimer=setInterval(()=>{if(globalChatReady)syncRecentCloudMessages(true);},2500);}catch(err){if(status)status.textContent='Не удалось загрузить сообщения из облака: '+(err.message||err);} 
     }else {const onlineEl=$('serverOnline');if(onlineEl)onlineEl.textContent='—';}
     if(status&&state!=='SUBSCRIBED')status.textContent=state==='CHANNEL_ERROR'?'🔴 Ошибка подключения глобального чата. Проверь Realtime в настройках Supabase.':'Подключение к глобальному чату…';
     else if(status&&state==='SUBSCRIBED')status.textContent='🟢 Глобальный чат подключён.';
@@ -1668,6 +1823,33 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
 @media(prefers-reduced-motion:reduce){.base-display-slot{animation:none!important}}
 </style>
 
+
+<style id="pc-chat-window-bottom-right-v126">
+/* v1.2.6: на ПК окно чата открывается как компактная плавающая панель внизу справа. */
+@media (min-width: 900px){
+  #chat.tab:not(.hidden){
+    position:fixed!important;right:14px!important;bottom:76px!important;left:auto!important;top:auto!important;
+    width:min(760px,calc(100vw - 28px))!important;max-width:760px!important;
+    max-height:calc(100vh - 104px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+    z-index:998!important;margin:0!important;padding:0!important;
+    border:1px solid rgba(185,168,255,.58)!important;border-radius:18px!important;
+    background:rgba(10,16,31,.97)!important;box-shadow:0 18px 60px rgba(0,0,0,.62),0 0 28px rgba(167,139,250,.18)!important;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  }
+  #chat.tab:not(.hidden)>.panel{margin:10px!important;}
+  #chat.tab:not(.hidden) #worldFeedPanel,
+  #chat.tab:not(.hidden) #showWorldFeedRow{display:none!important;}
+  #chat.tab:not(.hidden) .chatbox{height:min(42vh,360px)!important;min-height:180px!important;}
+  #chat.tab:not(.hidden) .panel:has(#creatorModerationPanel){min-height:0!important;}
+}
+@media (min-width:900px) and (max-width:1050px){
+  #chat.tab:not(.hidden){width:min(700px,calc(100vw - 28px))!important;}
+}
+@media (max-width:899px){
+  #chat.tab:not(.hidden){position:static!important;width:auto!important;max-height:none!important;overflow:visible!important;}
+}
+</style>
+
 </body>
 </html>
 
@@ -1693,7 +1875,7 @@ button[data-tab="chat"].active{background:rgba(93,70,155,.92)!important;border-c
 </style>
 <script>
 // Вынести кнопку из горизонтально прокручиваемой навигации: fixed теперь всегда привязан к экрану.
-(()=>{const moveChatButton=()=>{const b=document.querySelector('#tabs button[data-tab="chat"]');if(b&&b.parentElement!==document.body)document.body.appendChild(b);};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',moveChatButton,{once:true});else moveChatButton();})();
+(()=>{const moveChatButton=()=>{const b=document.querySelector('#tabs button[data-tab="chat"]'),nav=document.getElementById('tabs');if(!b||!nav)return;if(window.matchMedia('(max-width:720px)').matches){if(b.parentElement!==document.body)document.body.appendChild(b);}else if(b.parentElement!==nav){nav.appendChild(b);}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',moveChatButton,{once:true});else moveChatButton();window.addEventListener('resize',moveChatButton,{passive:true});})();
 </script>
 
 <style>
