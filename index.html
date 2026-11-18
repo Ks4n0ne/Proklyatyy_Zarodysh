@@ -708,7 +708,13 @@ footer{border-color:#382653;color:#a998c4}
 <div class="app">
 
 
-<div id="settingsModal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-label="Настройки игры"><div class="settings-card"><div class="row"><h2>⚙️ Настройки</h2><button type="button" class="btn secondary" id="settingsClose">✕</button></div><label class="setting-row"><span>🔊 Громкость</span><b id="volumeValue">30%</b></label><input id="volumeSlider" type="range" min="0" max="100" value="30" class="volume-slider"><div class="muted">Громкость фоновой музыки. Уровень музыки увеличен; включается переключателем.</div><label class="setting-toggle"><span>🌦️ Эффекты погоды</span><input id="weatherFxToggle" type="checkbox" checked></label><label class="setting-toggle"><span>🎵 Музыка</span><input id="musicSettingToggle" type="checkbox"></label><label class="setting-toggle"><span>💬 Звуки уведомлений чата</span><input id="chatNotificationsToggle" type="checkbox" checked></label><div class="muted" style="font-size:11px;margin-top:7px">🎼 Для каждого мира и события звучит отдельная процедурная музыкальная тема.</div><div class="notice" id="pwaInstallBox" style="margin-top:12px">
+<div id="settingsModal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-label="Настройки игры"><div class="settings-card"><div class="row"><h2>⚙️ Настройки</h2><button type="button" class="btn secondary" id="settingsClose">✕</button></div><label class="setting-row"><span>🔊 Громкость</span><b id="volumeValue">30%</b></label><input id="volumeSlider" type="range" min="0" max="100" value="30" class="volume-slider"><div class="muted">Громкость фоновой музыки. Уровень музыки увеличен; включается переключателем.</div><label class="setting-toggle"><span>🌦️ Эффекты погоды</span><input id="weatherFxToggle" type="checkbox" checked></label><label class="setting-toggle"><span>🎵 Музыка</span><input id="musicSettingToggle" type="checkbox"></label><label class="setting-toggle"><span>💬 Звуки уведомлений чата</span><input id="chatNotificationsToggle" type="checkbox" checked></label><div class="muted" style="font-size:11px;margin-top:7px">🎼 Для каждого мира и события звучит отдельная процедурная музыкальная тема.</div><div class="notice" id="pcDownloadBox" style="margin-top:12px">
+ <div style="font-weight:800;margin-bottom:5px">🖥️ Версия для компьютера</div>
+ <div class="muted" style="font-size:12px;margin-bottom:9px">Скачай HTML-файл игры на компьютер и запускай его в браузере. Для глобального чата и онлайн-функций понадобится интернет.</div>
+ <button type="button" class="btn" id="pcDownloadButton" style="width:100%">⬇️ Скачать игру для ПК</button>
+ <div id="pcDownloadHint" class="muted" style="font-size:11px;margin-top:7px" aria-live="polite">Файл будет сохранён в папку загрузок.</div>
+</div>
+<div class="notice" id="pwaInstallBox" style="margin-top:12px">
  <div style="font-weight:800;margin-bottom:5px">📲 Установить HUNTER'S WORLD</div>
  <div id="pwaInstallHint" class="muted" style="font-size:12px;margin-bottom:9px">Установи игру как приложение — она появится на главном экране и будет открываться в отдельном окне.</div>
  <button type="button" class="btn" id="pwaInstallButton" style="width:100%">Установить приложение</button>
@@ -903,7 +909,7 @@ footer{border-color:#382653;color:#a998c4}
 <section id="events" class="tab hidden">
  <div class="panel"><div class="row"><h2>🌦️ Мировое событие</h2><span class="pill" id="eventClock">Событие активно</span></div><div class="notice" id="eventNotice">Обычная погода. Во время события у каждого пойманного персонажа есть 18% шанс получить его погодный эффект. Такой персонаж навсегда приносит больше денег.</div><div class="foods" id="eventChoices" style="margin-top:10px"></div><h3 style="margin:14px 0 6px">⏳ Расписание событий</h3><div id="eventSchedule" class="event-schedule"></div><small class="muted">Таймеры будущих событий приблизительные: длительность текущего события 5–10 минут, затем ожидание по расписанию.</small><p class="muted">Погода сменяется автоматически по расписанию. Каждое событие длится случайные 5–10 минут, затем возвращается обычная погода. В комнате погода синхронизируется с ведущим игроком.</p><h3>🎉 Редкие события</h3><div id="specialEvents" class="foods"></div><div class="notice" id="specialEventStatus">События появляются по таймеру.</div><h3>🏅 Таблица лидеров</h3><div id="leaderboard" class="event-schedule"></div></div>
 </section>
-<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER'S WORLD • 1.2.11<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
+<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER'S WORLD • 1.2.12<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
 </div>
 
 <script>
@@ -1661,7 +1667,7 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
 </script>
 
 <footer class="music-credits-footer">
- <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER'S WORLD • 1.2.11</strong></div>
+ <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER'S WORLD • 1.2.12</strong></div>
  <a href="#musicCredits" class="music-credits-toggle" id="musicCreditsToggle" aria-expanded="false">🎼 Авторы и произведения музыки</a>
  <div id="musicCredits" class="music-credits-content hidden">
   <div class="music-credit-item"><b>Произведение:</b> «HUNTER'S WORLD — Саундтрек миров» и восемь тематических композиций миров.<small><b>Автор:</b> многослойная процедурная композиция, созданная средствами Web Audio API специально для HUNTER'S WORLD: мелодия, бас, аккорды и перкуссия.</small></div>
@@ -1755,6 +1761,25 @@ window.addEventListener('beforeunload',()=>{if(!window.__foodCallResetting)save(
 (()=>{
  const button=document.getElementById('pwaInstallButton');
  const hint=document.getElementById('pwaInstallHint');
+ const pcDownloadButton=document.getElementById('pcDownloadButton');
+ const pcDownloadHint=document.getElementById('pcDownloadHint');
+ if(pcDownloadButton){
+  pcDownloadButton.addEventListener('click',()=>{
+   try{
+    const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='HUNTERS_WORLD_1.2.12_PC.html';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.12_PC.html отправлен в загрузки.';
+   }catch(error){
+    if(pcDownloadHint)pcDownloadHint.textContent='Не удалось скачать файл. Попробуй открыть игру в Chrome или Edge.';
+   }
+  });
+ }
  if(!button||!hint)return;
  let installPrompt=null;
  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
