@@ -682,6 +682,12 @@ footer{border-color:#382653;color:#a998c4}
 </style>
 
 
+
+<style>
+.hw-world-hero{position:relative;overflow:hidden;min-height:205px;border:1px solid #67508d;border-radius:17px;background:linear-gradient(180deg,#182b4c 0%,#35486b 56%,#263b36 57%,#17291f 100%);margin:12px 0;padding:14px;color:#fff;isolation:isolate}
+.hw-world-sky{position:absolute;inset:10px 14px auto;text-align:right;color:#d7e5ff;opacity:.8;font-size:18px;letter-spacing:12px}.hw-world-emblem{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}.hw-shield{width:67px;height:78px;display:grid;place-items:center;font-size:34px;background:linear-gradient(145deg,#b99a55,#624b2b);border:3px solid #f0d99b;clip-path:polygon(5% 0,95% 0,90% 70%,50% 100%,10% 70%);filter:drop-shadow(0 4px 7px #0008)}.hw-world-emblem b{font-size:13px}.hw-world-emblem small{font-size:10px;color:#e5d8b6}.hw-world-land{position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:space-around;align-items:end;font-size:46px;text-shadow:0 4px 5px #0008}.hw-world-land span:last-child{font-size:31px}.hw-world-scene-caption{position:absolute;bottom:8px;left:10px;right:10px;text-align:center;font-size:10px;color:#e2e9d9}.hw-world-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.hw-world-stats .item{min-width:0}.hw-world-stats strong{display:block;font-size:14px;overflow-wrap:anywhere}.hw-world-progress{height:11px;background:#111827;border:1px solid #45516b;border-radius:99px;overflow:hidden;margin:8px 0 5px}.hw-world-progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#5b9bde,#a78bfa);transition:width .3s}.hw-crest-votes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0}.hw-crest-choice{min-width:0;min-height:66px;border:1px solid #46516c;border-radius:12px;background:#141e32;color:#fff;font-size:25px}.hw-crest-choice small{display:block;font-size:10px;color:#aab6d0}.hw-crest-choice.selected{border-color:#c4a2ff;background:#38265a;box-shadow:0 0 0 1px #c4a2ff55}@media(max-width:420px){.hw-world-stats{grid-template-columns:1fr}.hw-crest-votes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+
 </head>
 <body>
 <div id="runtimeError" class="notice hidden" style="position:fixed;z-index:200;left:10px;right:10px;top:10px;background:#572b36;border-color:#b85b6b" role="alert"></div><div id="weatherLayer" class="weather-layer" aria-hidden="true"></div><div id="ohEventLayer" class="ohoh-layer" aria-hidden="true"></div><div id="ohEventBanner" class="oh-banner hidden"></div><div id="weatherFlash" class="weather-flash" aria-hidden="true"></div>
@@ -735,6 +741,7 @@ footer{border-color:#382653;color:#a998c4}
  
 </section>
 <nav id="tabs">
+ <button data-tab="livingworld"><span>🌍 Живой мир</span></button>
  <button class="active" data-tab="play"><svg class="hw-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.8v16.4L20 12 5 3.8Z"/><path d="M4 12h3"/></svg><span>Бросок</span></button>
  <button data-tab="world"><svg class="hw-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg><span>Миры</span></button>
  <button data-tab="base"><svg class="hw-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-6h6v6"/></svg><span>База</span></button>
@@ -766,6 +773,35 @@ footer{border-color:#382653;color:#a998c4}
   <div class="notice" id="profileNotice">Ник задаётся один раз бесплатно. Повторная смена оплачивается игровой валютой.</div>
  </div>
  <div class="panel danger-zone"><h2>♻️ Начать игру заново</h2><p class="muted">Сбросит деньги, уровень, силу, персонажей, предметы, ауры, достижения и миры. Ник, история чата, история модерации и таймер ежедневного колеса сохранятся. Аватар, текущая погода и погодные эффекты сохранятся.</p><button class="btn red" id="resetGame">СБРОСИТЬ ВСЁ ДО НУЛЯ</button></div>
+</section>
+<section id="livingworld" class="tab hidden">
+ <div class="panel" id="hwLivingWorldPanel">
+  <div class="row" style="align-items:center"><h2>🌍 Живой мир сервера</h2><span class="pill" id="hwWorldStagePill">Эпоха I</span></div>
+  <p class="muted">Общий мир меняется благодаря действиям игроков. Все изменения сохраняются на сервере и видны каждому.</p>
+  <div class="hw-world-hero" id="hwWorldScene">
+   <div class="hw-world-sky" id="hwWorldSky">✦　☁　✦</div>
+   <div class="hw-world-emblem" id="hwWorldEmblem"><div class="hw-shield"><span id="hwWorldCrestSymbol">🦅</span></div><b id="hwWorldCrestName">Герб охотников</b><small id="hwWorldMotto">«Вместе создаём историю»</small></div>
+   <div class="hw-world-land"><span id="hwWorldLandmark">🏚️</span><span id="hwWorldNpc">👤</span></div>
+   <div class="hw-world-scene-caption" id="hwWorldSceneCaption">Забытые руины · начало новой истории</div>
+  </div>
+  <div class="hw-world-stats">
+   <div class="item"><small>Стадия мира</small><strong id="hwWorldStage">Разрушенные руины</strong></div>
+   <div class="item"><small>Общий вклад</small><strong id="hwWorldActions">0 действий</strong></div>
+   <div class="item"><small>Участников</small><strong id="hwWorldPlayers">0</strong></div>
+  </div>
+  <h3 style="margin-top:16px">🏗️ Возрождение столицы</h3>
+  <p class="muted" id="hwWorldTaskText">Исследуйте руины и расчистите место для первой постройки.</p>
+  <div class="notice"><div class="row"><b id="hwWorldProgressLabel">Прогресс проекта</b><b id="hwWorldProgressValue">0%</b></div><div class="hw-world-progress"><i id="hwWorldProgressBar"></i></div><small class="muted" id="hwWorldProgressHint">Нужно 40 совместных действий</small></div>
+  <div class="two" style="margin-top:10px"><button class="btn" id="hwWorldExplore" type="button">🔎 Исследовать руины</button><button class="btn secondary" id="hwWorldBuild" type="button">🧱 Помочь строительству</button></div>
+  <div class="notice" id="hwWorldActionStatus" aria-live="polite" style="margin-top:9px">Подключаем общий мир…</div>
+ </div>
+ <div class="panel">
+  <div class="row"><h2>🛡️ Герб сервера</h2><span class="pill">Общий символ</span></div>
+  <p class="muted">Герб представляет всё сообщество HUNTER'S WORLD. Игроки могут голосовать за символ, который будет украшать флаги и постройки.</p>
+  <div class="hw-crest-votes" id="hwCrestChoices"><button type="button" class="hw-crest-choice" data-crest="🦅">🦅<small>Орёл</small></button><button type="button" class="hw-crest-choice" data-crest="🐺">🐺<small>Волк</small></button><button type="button" class="hw-crest-choice" data-crest="🐉">🐉<small>Дракон</small></button><button type="button" class="hw-crest-choice" data-crest="🦁">🦁<small>Лев</small></button><button type="button" class="hw-crest-choice" data-crest="⚔️">⚔️<small>Клинки</small></button></div>
+  <div class="muted" id="hwCrestVoteStatus">Голосование за символ герба.</div>
+ </div>
+ <div class="panel"><div class="row"><h2>📖 Летопись сервера</h2><button class="btn secondary" id="hwWorldRefresh" type="button">↻ Обновить</button></div><div id="hwWorldHistory" class="cards"><div class="notice">Загрузка истории…</div></div></div>
 </section>
 <section id="play" class="tab">
 
@@ -912,7 +948,7 @@ footer{border-color:#382653;color:#a998c4}
 <section id="events" class="tab hidden">
  <div class="panel"><div class="row"><h2>🌦️ Мировое событие</h2><span class="pill" id="eventClock">Событие активно</span></div><div class="notice" id="eventNotice">Обычная погода. Во время события у каждого пойманного персонажа есть 18% шанс получить его погодный эффект. Такой персонаж навсегда приносит больше денег.</div><div class="foods" id="eventChoices" style="margin-top:10px"></div><h3 style="margin:14px 0 6px">⏳ Расписание событий</h3><div id="eventSchedule" class="event-schedule"></div><small class="muted">Таймеры будущих событий приблизительные: длительность текущего события 5–10 минут, затем ожидание по расписанию.</small><p class="muted">Погода сменяется автоматически по расписанию. Каждое событие длится случайные 5–10 минут, затем возвращается обычная погода. В комнате погода синхронизируется с ведущим игроком.</p><h3>🎉 Редкие события</h3><div id="specialEvents" class="foods"></div><div class="notice" id="specialEventStatus">События появляются по таймеру.</div><h3>🏅 Таблица лидеров</h3><div id="leaderboard" class="event-schedule"></div></div>
 </section>
-<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.27<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
+<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.31<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
 </div>
 
 <script>
@@ -1546,7 +1582,7 @@ $('submitAppeal').onclick=()=>{let r=getModeration(),muted=r.permanent||r.muteUn
 
 $('expandBase').onclick=()=>{let price=baseUpgradePrice();if(state.money<price){$('baseMessage').textContent='Не хватает денег. Нужно '+fmt(price)+'.';showBaseFullNotice();return;}state.money-=price;state.capacity+=4;$('baseMessage').textContent='База расширена! Теперь '+state.capacity+' слотов.';hideBaseFullNotice();refresh();save();};
 $('baseFullExpand').onclick=()=>$('expandBase').click();$('baseFullClose').onclick=hideBaseFullNotice;$('baseFullDismiss').onclick=hideBaseFullNotice;
-document.addEventListener('click',e=>{let b=e.target.closest('[data-tab]');if(!b)return;try{localStorage.setItem('hunters_world_active_tab_v1',b.dataset.tab);localStorage.setItem('hunters_world_last_tab_v1',b.dataset.tab);}catch(err){}document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tab:not(#profile)').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));$('profile').classList.add('hidden');if(b.dataset.tab==='wheel')renderWheel();if(b.dataset.tab==='events'){buildEventSchedule();updateEventSchedule();renderWorldEventFeed();}if(b.dataset.tab==='world')renderWorldTravel();if(b.dataset.tab==='progress')renderProgress();if(b.dataset.tab==='social')renderSocial();if(b.dataset.tab==='chat'){updateChatModerationUI();$('chatMessages').scrollTop=$('chatMessages').scrollHeight;if(!$('chatInput').disabled)$('chatInput').focus();}});
+document.addEventListener('click',e=>{let b=e.target.closest('[data-tab]');if(!b)return;try{localStorage.setItem('hunters_world_active_tab_v1',b.dataset.tab);localStorage.setItem('hunters_world_last_tab_v1',b.dataset.tab);}catch(err){}document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tab:not(#profile)').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));$('profile').classList.add('hidden');if(b.dataset.tab==='livingworld'&&typeof window.HW_REFRESH_LIVING_WORLD==='function')window.HW_REFRESH_LIVING_WORLD();if(b.dataset.tab==='wheel')renderWheel();if(b.dataset.tab==='events'){buildEventSchedule();updateEventSchedule();renderWorldEventFeed();}if(b.dataset.tab==='world')renderWorldTravel();if(b.dataset.tab==='progress')renderProgress();if(b.dataset.tab==='social')renderSocial();if(b.dataset.tab==='chat'){updateChatModerationUI();$('chatMessages').scrollTop=$('chatMessages').scrollHeight;if(!$('chatInput').disabled)$('chatInput').focus();}});
 $('profileOpen').onclick=()=>{$('profile').classList.toggle('hidden');$('chat').classList.add('hidden');try{if(!$('profile').classList.contains('hidden'))localStorage.setItem('hunters_world_active_tab_v1','profile');else localStorage.setItem('hunters_world_active_tab_v1',localStorage.getItem('hunters_world_last_tab_v1')||'play');}catch(err){}if(!$('profile').classList.contains('hidden'))renderProfile();};
 $('profileClose').onclick=()=>{$('profile').classList.add('hidden');try{localStorage.setItem('hunters_world_active_tab_v1',localStorage.getItem('hunters_world_last_tab_v1')||'play');}catch(err){}};
 const brandTitle=$('.brand-title');if(brandTitle){brandTitle.style.cursor='pointer';brandTitle.title='Нажми, чтобы обновить игру';brandTitle.setAttribute('role','button');brandTitle.setAttribute('tabindex','0');const reloadGame=()=>window.location.reload();brandTitle.addEventListener('click',reloadGame);brandTitle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();reloadGame();}});}
@@ -1673,7 +1709,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
 </script>
 
 <footer class="music-credits-footer">
- <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.27</strong></div>
+ <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.31</strong></div>
  <a href="#musicCredits" class="music-credits-toggle" id="musicCreditsToggle" aria-expanded="false">🎼 Авторы и произведения музыки</a>
  <div id="musicCredits" class="music-credits-content hidden">
   <div class="music-credit-item"><b>Произведение:</b> «HUNTER\'S WORLD — Саундтрек миров» и восемь тематических композиций миров.<small><b>Автор:</b> многослойная процедурная композиция, созданная средствами Web Audio API специально для HUNTER\'S WORLD: мелодия, бас, аккорды и перкуссия.</small></div>
@@ -1686,6 +1722,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
+ const $=id=>document.getElementById(id);
  const SUPABASE_URL='https://bcjbyacwmluyxqzeiwtw.supabase.co';
  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_P7TmWqL3vgO_UtcxnwNsqw_D7Ns0Yv6';
  if(!window.supabase||!window.supabase.createClient){setTimeout(()=>{const e=document.getElementById('cloudFriendIdentity');if(e)e.textContent='Не удалось загрузить Supabase. Проверь интернет.'},0);return;}
@@ -1709,9 +1746,33 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
   }catch(e){status.textContent='Не удалось загрузить общий рейтинг. Выполни SQL-настройку таблицы лидеров.';rowsBox.innerHTML='<small class="muted">'+String(e.message||e).replace(/[<>]/g,'')+'</small>';}
  }
  window.HW_REFRESH_LEADERBOARD=()=>refreshOnlineLeaderboard();
+ let worldBusy=false,worldRefreshTimer=null;
+ const worldEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const worldStageInfo=[
+  {name:'Разрушенные руины',task:'Исследуйте руины и расчистите место для первой постройки.',target:40,landmark:'🏚️',npc:'👤',caption:'Забытые руины · начало новой истории',sky:'✦　☁　✦'},
+  {name:'Фундамент столицы',task:'Фундамент заложен. Помогите возвести стены первой цитадели.',target:100,landmark:'🏗️',npc:'🧑‍🔧',caption:'Строители прибыли в долину',sky:'☀　✦　☁'},
+  {name:'Стены цитадели',task:'Столица обретает форму. Завершите восстановление центральной площади.',target:180,landmark:'🏰',npc:'🧙',caption:'В городе появился Хранитель хроник',sky:'☀　🕊　✦'},
+  {name:'Возрождённая столица',task:'Первая столица восстановлена. Следующая глава истории скоро начнётся.',target:180,landmark:'🏰',npc:'🧙',caption:'Столица охотников возрождена!',sky:'☀　✦　🕊'}
+ ];
+ function renderLivingWorld(data){const w=data?.world||data||{},stage=Math.max(0,Math.min(3,Number(w.stage)||0)),info=worldStageInfo[stage],progress=Math.max(0,Number(w.progress)||0),target=info.target,pct=stage===3?100:Math.min(100,Math.floor(progress/target*100));
+  const put=(id,v)=>{const e=$(id);if(e)e.textContent=v;};
+  put('hwWorldStagePill','Эпоха '+(stage+1));put('hwWorldStage',info.name);put('hwWorldActions',(Number(w.total_actions)||0).toLocaleString('ru-RU')+' действий');put('hwWorldPlayers',Number(w.participants)||0);put('hwWorldTaskText',info.task);put('hwWorldProgressValue',pct+'%');put('hwWorldProgressLabel',stage===3?'Проект завершён':'Этап '+(stage+1)+' из 3');put('hwWorldProgressHint',stage===3?'Первый глобальный проект завершён':progress+' / '+target+' действий сообщества');put('hwWorldSceneCaption',info.caption);put('hwWorldLandmark',info.landmark);put('hwWorldNpc',info.npc);put('hwWorldSky',info.sky);put('hwWorldCrestSymbol',w.crest_symbol||'🦅');put('hwWorldCrestName',w.crest_name||'Герб охотников');put('hwWorldMotto',w.motto||'«Вместе создаём историю»');const bar=$('hwWorldProgressBar');if(bar)bar.style.width=pct+'%';
+  document.querySelectorAll('.hw-crest-choice').forEach(b=>b.classList.toggle('selected',b.dataset.crest===(w.crest_symbol||'🦅')));
+  put('hwCrestVoteStatus','Текущий символ: '+(w.crest_symbol||'🦅')+' · '+(Number(w.crest_votes)||0)+' голосов');
+  const hist=$('hwWorldHistory');if(hist){const rows=Array.isArray(data?.history)?data.history:[];hist.innerHTML=rows.length?rows.map(x=>'<div class="item"><b>'+worldEsc(x.title)+'</b><small>'+worldEsc(x.description||'')+'</small><small>'+new Date(x.created_at).toLocaleString('ru-RU')+'</small></div>').join(''):'<div class="notice">Летопись только начинается. Первые записи появятся после действий сообщества.</div>';}
+ }
+ async function refreshLivingWorld(){if(worldBusy)return;worldBusy=true;try{const {data,error}=await db.rpc('hw_world_get_snapshot');if(error)throw error;renderLivingWorld(data);const status=$('hwWorldActionStatus');if(status)status.textContent='🌐 Данные получены с общего сервера. Изменения видны всем игрокам.';}catch(e){const status=$('hwWorldActionStatus');if(status)status.textContent='Не удалось загрузить живой мир. Выполни SQL-настройку версии 1.2.31. '+(e.message||e);}finally{worldBusy=false;}}
+ async function doWorldAction(action){const status=$('hwWorldActionStatus');if(status)status.textContent='Отправляем действие на сервер…';try{const {data,error}=await db.rpc('hw_world_perform_action',{p_action:action});if(error)throw error;if(data?.error)throw new Error(data.error);if(status)status.textContent=data?.message||'Твой вклад добавлен в историю мира!';await refreshLivingWorld();}catch(e){if(status)status.textContent='Не удалось выполнить действие: '+(e.message||e);}}
+ async function voteWorldCrest(symbol){const status=$('hwCrestVoteStatus');if(status)status.textContent='Сохраняем голос…';try{const {data,error}=await db.rpc('hw_world_vote_crest',{p_symbol:symbol});if(error)throw error;if(data?.error)throw new Error(data.error);if(status)status.textContent=data?.message||'Голос учтён.';await refreshLivingWorld();}catch(e){if(status)status.textContent='Голосование пока недоступно. Проверь SQL-настройку. '+(e.message||e);}}
+ $('hwWorldExplore')?.addEventListener('click',()=>doWorldAction('explore'));
+ $('hwWorldBuild')?.addEventListener('click',()=>doWorldAction('build'));
+ $('hwWorldRefresh')?.addEventListener('click',refreshLivingWorld);
+ $('hwCrestChoices')?.addEventListener('click',e=>{const b=e.target.closest('[data-crest]');if(b)voteWorldCrest(b.dataset.crest);});
+ window.HW_REFRESH_LIVING_WORLD=refreshLivingWorld;
+ worldRefreshTimer=setInterval(()=>{if(!$('livingworld')?.classList.contains('hidden'))refreshLivingWorld();},12000);
+
  
  const seenChatIds=new Set();
- const $=id=>document.getElementById(id);
  const gameState=()=>window.HW_GAME_API?.getState?.()||null;
  const msg=(t)=>{if($('friendStatus'))$('friendStatus').textContent=t;};
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1921,10 +1982,10 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='HUNTERS_WORLD_1.2.27_PC.html';
+    a.download='HUNTERS_WORLD_1.2.31_PC.html';
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1500);
-    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.27_PC.html отправлен в загрузки.';
+    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.31_PC.html отправлен в загрузки.';
    }catch(error){
     if(pcDownloadHint)pcDownloadHint.textContent='Не удалось скачать файл. Попробуй открыть игру в Chrome или Edge.';
    }
