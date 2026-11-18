@@ -912,7 +912,7 @@ footer{border-color:#382653;color:#a998c4}
 <section id="events" class="tab hidden">
  <div class="panel"><div class="row"><h2>🌦️ Мировое событие</h2><span class="pill" id="eventClock">Событие активно</span></div><div class="notice" id="eventNotice">Обычная погода. Во время события у каждого пойманного персонажа есть 18% шанс получить его погодный эффект. Такой персонаж навсегда приносит больше денег.</div><div class="foods" id="eventChoices" style="margin-top:10px"></div><h3 style="margin:14px 0 6px">⏳ Расписание событий</h3><div id="eventSchedule" class="event-schedule"></div><small class="muted">Таймеры будущих событий приблизительные: длительность текущего события 5–10 минут, затем ожидание по расписанию.</small><p class="muted">Погода сменяется автоматически по расписанию. Каждое событие длится случайные 5–10 минут, затем возвращается обычная погода. В комнате погода синхронизируется с ведущим игроком.</p><h3>🎉 Редкие события</h3><div id="specialEvents" class="foods"></div><div class="notice" id="specialEventStatus">События появляются по таймеру.</div><h3>🏅 Таблица лидеров</h3><div id="leaderboard" class="event-schedule"></div></div>
 </section>
-<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.26<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
+<footer>АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: HUNTER\'S WORLD • 1.2.27<br>Браузерная игра<br>Создатель: <b>Ks4n0ne</b><br>Помощник: <b>Mediolanum</b><br>Для сотрудничества и рекламы: <a href="mailto:Nalekseev606@gmail.com" style="color:#baf34e">Nalekseev606@gmail.com</a></footer>
 </div>
 
 <script>
@@ -1334,7 +1334,7 @@ function renderProgress(){renderDailyReward();renderSeasonPass();renderRanks();}
 function renderFriends(){let box=$('friendsList');if(!box)return;let fs=state.friends||[];box.innerHTML=fs.length?fs.map((n,i)=>'<div class="item"><b>👤 '+escapeHtml(n)+'</b><small>В списке друзей</small><button class="btn secondary" data-friend-remove="'+i+'">Удалить</button></div>').join(''):'<div class="notice">Список друзей пока пуст.</div>';box.querySelectorAll('[data-friend-remove]').forEach(b=>b.onclick=()=>{state.friends.splice(Number(b.dataset.friendRemove),1);renderFriends();save();});}
 function renderSocial(){renderFriends();}
 function knownOnlinePlayers(){return [{name:playerName()}].filter(x=>x.name);}
-function renderLeaderboard(){let box=$('leaderboard');if(!box)return;let rows=[{name:playerName()||'Ты',level:state.level,money:state.money,income:income(),rebirths:state.rebirths}];let saved=[];try{saved=JSON.parse(localStorage.getItem('snack_hunt_local_records')||'[]')}catch(e){};let best=[...saved.filter(x=>x.name!==rows[0].name),...rows].sort((a,b)=>b.level-a.level||b.money-a.money).slice(0,10);localStorage.setItem('snack_hunt_local_records',JSON.stringify(best));box.innerHTML='<div class="notice">Локальный рейтинг этого устройства. Для общего рейтинга между игроками нужен сервер.</div>'+best.map((x,i)=>'<div class="leader-row"><b>#'+(i+1)+' '+x.name+'</b><span>ур. '+x.level+' · '+fmt(x.money)+' · '+fmt(x.income)+'/s</span></div>').join('');}
+function renderLeaderboard(){let box=$('leaderboard');if(!box)return;box.innerHTML='<div class="notice" id="hwLeaderboardStatus">Загружаем общий рейтинг игроков…</div><div id="hwLeaderboardRows"></div><button class="btn secondary" id="hwLeaderboardRefresh" type="button" style="margin-top:8px">↻ Обновить рейтинг</button>';if(typeof window.HW_REFRESH_LEADERBOARD==='function')window.HW_REFRESH_LEADERBOARD();}
 function renderSpecialEvents(){let box=$('specialEvents');if(!box)return;let now=Date.now(),ohActive=Number(state.ohEventEndsAt)>now,ohStatus=ohActive?'АКТИВНО · '+clockText(state.ohEventEndsAt-now):'Следующее через '+clockText(Math.max(0,Number(state.ohEventNextAt||0)-now)),items=[['gold','🪙 Золотой час','Доход базы ×2 на 3 минуты',state.goldHourUntil,120000],['boss','👑 Охота на FOOD GOD','Шанс встретить босса при броске',state.bossUntil,180000],['meteor','☄️ Метеоритный дождь','Шанс метеоритной мутации',state.meteorUntil,180000],['merchant','🧳 Секретный торговец','Редкий товар за игровую валюту',state.merchantUntil,240000]];box.innerHTML='<div class="item special-event-card" style="border-color:#ff7bc8;background:linear-gradient(135deg,#351431,#17152b)"><b>🖕 ОХОХОХО — особое событие</b><small>Раз в 3 дня 14 часов · длительность 3 минуты 14 секунд · эффект ×3,14</small><small>'+ohStatus+'</small></div>'+items.map(x=>'<div class="item special-event-card"><b>'+x[1]+'</b><small>'+x[2]+'</small><small>'+(x[3]>now?'Активно · '+clockText(x[3]-now):'Появится случайно')+'</small>'+(x[0]==='merchant'?'<button class="btn gold" id="merchantBuy" '+(x[3]<=now||state.merchantBought?.includes(state.questDay+'merchant')?'disabled':'')+'>Купить яйцо мутации · $75 000</button>':'')+'</div>').join('');let mb=$('merchantBuy');if(mb)mb.onclick=()=>{if(state.money<75000)return;state.money-=75000;state.merchantBought=[...(state.merchantBought||[]),state.questDay+'merchant'];let c=state.base[Math.floor(Math.random()*state.base.length)];if(c){c.rate=Math.floor(c.rate*1.5);c.mutation='Кристальный';c.sellValue=rollCharacterValue(c.rarity,c.mutation,c.rate);$('specialEventStatus').textContent='Торговец улучшил '+c.name+'! Доход вырос.';}else $('specialEventStatus').textContent='Товар куплен, но сначала поймай персонажа.';refresh();renderBase();renderSpecialEvents();save();};}
 function specialEventTick(){let now=Date.now(),labels=[];if(state.goldHourUntil<=now&&Math.random()<.00012){state.goldHourUntil=now+180000;labels.push('Золотой час начался! Доход базы удвоен на 3 минуты.');}if(state.bossUntil<=now&&Math.random()<.00007){state.bossUntil=now+180000;labels.push('Охота на FOOD GOD! Каждый бросок имеет шанс 22% привести босса.');}if(state.meteorUntil<=now&&Math.random()<.00009){state.meteorUntil=now+180000;labels.push('Метеоритный дождь! Метеоритная мутация может выпасть при броске.');}if(state.merchantUntil<=now&&Math.random()<.00008){state.merchantUntil=now+240000;state.merchantBought=[];labels.push('Секретный торговец прибыл на 4 минуты!');}if(labels.length){$('specialEventStatus').textContent=labels.join(' ');log('🎉 '+labels.join(' '));labels.forEach((label)=>notifyUnusual('Особое событие!',label,'event','🎉'));renderSpecialEvents();save();}if(now%5000<1100){renderSpecialEvents();renderLeaderboard();}}
 
@@ -1670,7 +1670,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
 </script>
 
 <footer class="music-credits-footer">
- <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.26</strong></div>
+ <div class="game-version-label" style="text-align:center;margin:12px 0 8px;font-size:12px;opacity:.78;letter-spacing:.08em">АКТУАЛЬНАЯ ВЕРСИЯ ИГРЫ: <strong>HUNTER\'S WORLD • 1.2.27</strong></div>
  <a href="#musicCredits" class="music-credits-toggle" id="musicCreditsToggle" aria-expanded="false">🎼 Авторы и произведения музыки</a>
  <div id="musicCredits" class="music-credits-content hidden">
   <div class="music-credit-item"><b>Произведение:</b> «HUNTER\'S WORLD — Саундтрек миров» и восемь тематических композиций миров.<small><b>Автор:</b> многослойная процедурная композиция, созданная средствами Web Audio API специально для HUNTER\'S WORLD: мелодия, бас, аккорды и перкуссия.</small></div>
@@ -1688,6 +1688,20 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
  if(!window.supabase||!window.supabase.createClient){setTimeout(()=>{const e=document.getElementById('cloudFriendIdentity');if(e)e.textContent='Не удалось загрузить Supabase. Проверь интернет.'},0);return;}
  const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
  let uid=null,lastNick='',busy=false,poll=null,globalChatChannel=null,globalChatReady=false,renderCloudMessage=null,chatPollTimer=null,chatHistoryLoaded=false;
+ async function refreshOnlineLeaderboard(){
+  const status=document.getElementById('hwLeaderboardStatus'),rowsBox=document.getElementById('hwLeaderboardRows');
+  if(!status||!rowsBox)return;
+  status.textContent='Загружаем общий рейтинг…';
+  try{
+   const {data,error}=await db.from('hw_public_leaderboard').select('user_id,nickname,level,money,rebirths,updated_at').order('level',{ascending:false}).order('money',{ascending:false}).limit(10);
+   if(error)throw error;
+   if(!data||!data.length){status.textContent='Пока нет игроков с облачным сохранением. Войди в аккаунт и синхронизируй прогресс.';rowsBox.innerHTML='';return;}
+   status.textContent='🌍 Общий рейтинг зарегистрированных игроков · '+data.length+' в таблице';
+   rowsBox.innerHTML=data.map((x,i)=>'<div class="leader-row"><b>#'+(i+1)+' '+String(x.nickname||'Игрок').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+(x.user_id===uid?' <span style="color:#9fe870">(ты)</span>':'')+'</b><span>ур. '+Number(x.level||1)+' · '+Number(x.money||0).toLocaleString('ru-RU')+' · ♻ '+Number(x.rebirths||0)+'</span></div>').join('');
+  }catch(e){status.textContent='Не удалось загрузить общий рейтинг. Выполни SQL-настройку таблицы лидеров.';rowsBox.innerHTML='<small class="muted">'+String(e.message||e).replace(/[<>]/g,'')+'</small>';}
+ }
+ window.HW_REFRESH_LEADERBOARD=()=>refreshOnlineLeaderboard();
+ 
  const seenChatIds=new Set();
  const $=id=>document.getElementById(id);
  const gameState=()=>window.HW_GAME_API?.getState?.()||null;
@@ -1869,6 +1883,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
  }
  let pendingVerifyEmail='';
  function bindAccountUI(){
+  document.addEventListener('click',e=>{if(e.target&&e.target.id==='hwLeaderboardRefresh')refreshOnlineLeaderboard();});
   if($('hwAccountStartBtn'))$('hwAccountStartBtn').onclick=()=>{const form=$('hwAccountForm');if(form)form.hidden=!form.hidden;};
   if($('hwLoginBtn'))$('hwLoginBtn').onclick=loginEmail;
   if($('hwVerifyCodeBtn'))$('hwVerifyCodeBtn').onclick=verifyAccountCode;
@@ -1879,7 +1894,7 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&uid&&cloudSaveReady){clearTimeout(cloudSaveTimer);uploadCloudSave(false);}});
   db.auth.getSession().then(({data,error})=>{if(error)throw error;const u=data.session?.user;if(u)accountStatus(u.is_anonymous?'Играешь как гость. Добавь почту и пароль, чтобы сохранить прогресс между устройствами.':('Вошёл как '+(u.email||'аккаунт')+'.'));}).catch(()=>{});
  }
- async function start(){bindAccountUI();try{await ensureAuth();}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Облачный профиль: '+(e.message||e);}try{connectGlobalChat();}catch(e){if($('globalChatStatus'))$('globalChatStatus').textContent='Ошибка запуска глобального чата: '+(e.message||e);}if(uid){try{await syncProfile();const sess=await db.auth.getSession();if(sess.data.session?.user&&!sess.data.session.user.is_anonymous){await loadCloudSave();}else{accountStatus('Играешь как гость. Зарегистрируй почту, чтобы включить облачное сохранение.');}await refreshSocial();await refreshTrades();if($('addFriendBtn'))$('addFriendBtn').onclick=searchAndRequest;setInterval(async()=>{try{await syncProfile();await refreshSocial();await refreshTrades();}catch(e){}},8000);if($('cloudFriendIdentity')&&!$('cloudFriendIdentity').textContent.startsWith('Облачный профиль:'))$('cloudFriendIdentity').textContent='Облачный профиль подключён.';}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Ошибка профиля: '+(e.message||e);}}}
+ async function start(){bindAccountUI();try{await ensureAuth();}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Облачный профиль: '+(e.message||e);}try{connectGlobalChat();}catch(e){if($('globalChatStatus'))$('globalChatStatus').textContent='Ошибка запуска глобального чата: '+(e.message||e);}if(uid){try{await syncProfile();const sess=await db.auth.getSession();if(sess.data.session?.user&&!sess.data.session.user.is_anonymous){await loadCloudSave();}else{accountStatus('Играешь как гость. Зарегистрируй почту, чтобы включить облачное сохранение.');}await refreshSocial();await refreshTrades();await refreshOnlineLeaderboard();if($('addFriendBtn'))$('addFriendBtn').onclick=searchAndRequest;setInterval(async()=>{try{await syncProfile();await refreshSocial();await refreshTrades();await refreshOnlineLeaderboard();}catch(e){}},30000);if($('cloudFriendIdentity')&&!$('cloudFriendIdentity').textContent.startsWith('Облачный профиль:'))$('cloudFriendIdentity').textContent='Облачный профиль подключён.';}catch(e){if($('cloudFriendIdentity'))$('cloudFriendIdentity').textContent='Ошибка профиля: '+(e.message||e);}}}
  start();
 })();
 </script>
@@ -1898,10 +1913,10 @@ window.HW_GAME_API={getState:()=>state,save:()=>save(),renderBase:()=>renderBase
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='HUNTERS_WORLD_1.2.26_PC.html';
+    a.download='HUNTERS_WORLD_1.2.27_PC.html';
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1500);
-    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.26_PC.html отправлен в загрузки.';
+    if(pcDownloadHint)pcDownloadHint.textContent='Готово! HUNTERS_WORLD_1.2.27_PC.html отправлен в загрузки.';
    }catch(error){
     if(pcDownloadHint)pcDownloadHint.textContent='Не удалось скачать файл. Попробуй открыть игру в Chrome или Edge.';
    }
